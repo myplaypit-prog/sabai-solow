@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Plan from './pages/Plan';
 import Trip from './pages/Trip';
 import { Login, Signup, Verify, Reset } from './pages/Auth';
-import { Courses, Season, MyTrips, Safety, PrintView, Credits, TourPage } from './pages/Misc';
+import { Courses, Season, MyTrips, Safety, PrintView, Credits, TourPage, NotFound } from './pages/Misc';
 
 function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { window.scrollTo(0, 0); }, [pathname]); return null; }
 
@@ -36,7 +36,7 @@ export default function App() {
             <Route path="/reset-password" element={<Reset />} />
           </Route>
           <Route path="/trip/:id/print" element={<PrintView />} />
-          <Route path="*" element={<Shell />} />
+          <Route element={<Shell />}><Route path="*" element={<NotFound />} /></Route>
         </Routes>
       </HashRouter>
     </AppProvider>

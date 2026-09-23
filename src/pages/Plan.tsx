@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useApp } from '../state';
 import { DEFAULT_INPUTS, planTrip, rankCourses, type PlanInputs, type Intensity } from '../lib/planner';
@@ -47,6 +47,16 @@ function Toggle({ on, onChange, label, id }: { on: boolean; onChange: (v: boolea
   return <button id={id} type="button" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className="w-16 h-11 grid place-items-center shrink-0"><span className={`w-14 h-8 rounded-full flex items-center px-1 transition-colors ${on ? 'bg-sage justify-end' : 'bg-hair-2 justify-start'}`}><span className="w-6 h-6 rounded-full bg-white shadow" /></span></button>;
 }
 
+/** 입력 중인 진단을 이 기기에 잠시 보관해요(새로고침·뒤로 가기 대비, 14일 보관) */
+const DRAFT_KEY = 'ss.planDraft';
+const readDraft = (): PlanInputs | null => {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null') as { inp: PlanInputs; at: number } | null;
+    return d && Date.now() - d.at < 14 * 864e5 ? d.inp : null;
+  } catch { return null; }
+};
+const writeDraft = (inp: PlanInputs | null) => { try { if (inp) localStorage.setItem(DRAFT_KEY, JSON.stringify({ inp, at: Date.now() })); else localStorage.removeItem(DRAFT_KEY); } catch { /* 저장 불가 환경 */ } };
+
 export default function Plan() {
   const { user, ready, toast } = useApp();
   const nav = useNavigate();
@@ -67,17 +77,28 @@ export default function Plan() {
     ...(qPace && PACES.some((p) => p.v === qPace) ? { intensity: qPace } : {}),
     ...(qInterests.length ? { interests: qInterests } : {}),
   }));
-  const set = (p: Partial<PlanInputs>) => setInp((x) => ({ ...x, ...p }));
+  const [saved, setSaved] = useState<PlanInputs | null>(() => (sp.toString() ? null : readDraft()));
+  const patch = (p: Partial<PlanInputs>) => setInp((x) => ({ ...x, ...p })); // 자동 보정(저장본 안내는 그대로)
+  const touched = useRef(false); // 직접 고른 뒤부터 저장
+  const set = (p: Partial<PlanInputs>) => { touched.current = true; setSaved(null); patch(p); };
+  const resume = () => {
+    if (!saved) return;
+    const past = saved.whenMode === 'dates' && !!saved.start && saved.start < todayISO();
+    setInp({ ...inp, ...saved, ...(past ? { start: inp.start, end: inp.end } : {}) });
+    touched.current = true; setSaved(null);
+    toast(past ? '지난 날짜는 빼고 이어서 불러왔어요' : '입력하던 내용을 불러왔어요');
+  };
+  useEffect(() => { if (touched.current) writeDraft(inp); }, [inp]);
 
   const next = `/plan${sp.toString() ? `?${sp.toString()}` : ''}`;
   useEffect(() => { if (ready && !user) nav('/login', { replace: true, state: { next } }); else if (ready && user && !user.verified) nav('/verify', { replace: true }); }, [ready, user, nav, next]);
-  useEffect(() => { if (preset && !(qDays >= 3)) { const c = courseById(preset); if (c) set({ days: c.days, courseId: preset }); } }, [preset, qDays]);
+  useEffect(() => { if (preset && !(qDays >= 3)) { const c = courseById(preset); if (c) patch({ days: c.days, courseId: preset }); } }, [preset, qDays]);
 
   const dateDays = inp.whenMode === 'dates' && inp.start && inp.end ? diffDays(inp.start, inp.end) + 1 : null;
   const dateErr = dateDays === null ? null
     : dateDays < 1 ? '귀국일이 출발일보다 빨라요. 날짜를 다시 골라 주세요.'
     : dateDays < 3 || dateDays > 21 ? '여행 일수는 3~21일까지 짤 수 있어요. 날짜를 다시 골라 주세요.' : null;
-  useEffect(() => { if (dateDays && dateDays >= 3 && dateDays <= 21) set({ days: dateDays }); }, [dateDays]);
+  useEffect(() => { if (dateDays && dateDays >= 3 && dateDays <= 21) patch({ days: dateDays }); }, [dateDays]);
 
   const whenOk = inp.whenMode === 'dates' ? !!(inp.start && inp.end) && !dateErr : inp.whenMode === 'month' ? !!inp.month : false;
   const canMake = whenOk && inp.interests.length > 0;
@@ -92,7 +113,7 @@ export default function Plan() {
     const trip = planTrip(inp, user.id);
     for (let k = 1; k < 3; k++) { await new Promise((r) => setTimeout(r, 550)); setGen(k); }
     await new Promise((r) => setTimeout(r, Math.max(0, 1600 - (Date.now() - t0))));
-    try { await putTrip(trip); nav(`/trip/${trip.id}`); } catch { setGen(-1); toast('일정을 저장하지 못했어요. 다시 시도해 주세요.'); }
+    try { await putTrip(trip); writeDraft(null); nav(`/trip/${trip.id}`); } catch { setGen(-1); toast('일정을 저장하지 못했어요. 다시 시도해 주세요.'); }
   };
 
   if (gen >= 0) return (
@@ -127,6 +148,15 @@ export default function Plan() {
         </div>
         <div className="card rounded-2xl px-4 py-3 flex items-center gap-3 self-start lg:self-auto"><span className="w-10 h-10 rounded-full bg-sage-t text-sage grid place-items-center"><Icon name="shield" size={20} /></span><span className="flex flex-col"><b className="text-[15px]">1인 안심 원칙</b><span className="text-[13px] text-slate">외교부 여행경보 지역 제외 · 21시 전 도착</span></span></div>
       </section>
+
+      {saved && (
+        <div className="wrap gutter mt-6" role="status">
+          <div className="card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <span className="flex items-center gap-3 flex-1"><span className="w-10 h-10 rounded-full bg-sky-t text-sky-d grid place-items-center shrink-0"><Icon name="clock" size={20} /></span><span className="flex flex-col"><b className="text-[15px]">입력하던 진단이 있어요</b><span className="text-[14px] text-slate">{saved.days}일 · 관심사 {saved.interests.length}개 · 이어서 할 수 있어요</span></span></span>
+            <span className="flex gap-2"><button type="button" onClick={resume} className="btn btn-primary !min-h-11 !px-5 flex-1">이어서 하기</button><button type="button" onClick={() => setSaved(null)} className="btn btn-ghost !min-h-11 !px-5 flex-1">새로 시작</button></span>
+          </div>
+        </div>
+      )}
 
       {/* 5단계 진행 */}
       <div className="wrap gutter mt-6 lg:mt-8">

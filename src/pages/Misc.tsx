@@ -7,7 +7,7 @@ import { tourById } from '../data/tours';
 import { ALL_CREDITS, GENERATED } from '../data/photos';
 import { EMERGENCY, EMERGENCY_SRC } from '../components/Layout';
 import { stayName } from '../data/stays';
-import { listTrips, deleteTrip, getTrip } from '../lib/trips';
+import { listTrips, deleteTrip, getTrip, putTrip } from '../lib/trips';
 import { deleteAll } from '../lib/auth';
 import { storageMode } from '../lib/storage';
 import { fmtDot, fmtMD, weekday, todayISO, addDays, diffDays } from '../lib/dates';
@@ -85,7 +85,7 @@ export function MyTrips() {
               <span className="text-[15px]">{d0 ? `${fmtDot(d0)} 출발 · ` : `${t.month}월 · `}{t.nights}박 {t.days.length}일 · 도시 {t.cityIds.filter((x) => x !== 'bangkok').length}곳</span>
               <div className="flex gap-1.5 flex-wrap">{t.offline ? <Badge kind="rec" size="sm">오프라인 저장됨</Badge> : <Badge kind="holiday" size="sm">온라인에서만</Badge>}{t.inputs.safe && <Badge kind="safe" size="sm">안심 일정</Badge>}</div>
               <span className="text-sm text-muted">마지막 저장 {new Date(t.createdAt).toLocaleString('ko-KR')}</span>
-              <button type="button" onClick={async () => { await deleteTrip(t.id); setTrips(trips.filter((x) => x.id !== t.id)); toast('일정을 지웠어요'); }} className="self-start min-h-11 text-[15px] font-bold text-chili-d flex items-center gap-1.5"><Icon name="trash" size={18} />일정 지우기</button>
+              <button type="button" onClick={async () => { await deleteTrip(t.id); setTrips((xs) => (xs ?? []).filter((x) => x.id !== t.id)); toast('일정을 지웠어요', { label: '되돌리기', run: async () => { await putTrip(t); setTrips(await listTrips(t.userId)); } }); }} className="self-start min-h-11 text-[15px] font-bold text-chili-d flex items-center gap-1.5"><Icon name="trash" size={18} />일정 지우기</button>
             </div>
           </li>); })}</ul>
       )}
@@ -172,5 +172,19 @@ export function TourPage() {
     <main className="wrap gutter pt-8 pb-28 flex flex-col gap-6"><div className="h-[260px] lg:h-[420px] rounded-[28px] overflow-hidden"><Photo k={t.photo} eager /></div>
       <Kicker>Local tour</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.03em]">{t.name}</h1><span className="text-[15px]">{t.cities.map((c) => cityById(c).name).join(', ')} · {t.duration} · {t.priceBand}</span>
       {t.noRiding && <div><Badge kind="noride" /></div>}<TourBlocks id={t.id} /></main>
+  );
+}
+
+export function NotFound() {
+  return (
+    <main className="wrap gutter py-14 lg:py-24 pb-28 flex-1 grid lg:grid-cols-2 gap-8 items-center">
+      <div className="flex flex-col gap-5 items-start">
+        <Kicker>404 · Lost in the alley</Kicker>
+        <h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">골목을 잘못 들어왔어요</h1>
+        <p className="m-0 text-[16px] leading-relaxed text-slate">찾는 페이지가 없거나 주소가 바뀌었어요. 홈에서 다시 시작하거나 바로 일정을 만들어 보세요.</p>
+        <div className="flex flex-col sm:flex-row gap-3"><Btn to="/">홈으로</Btn><Btn to="/plan" kind="line" icon="spark">맞춤 일정 만들기</Btn></div>
+      </div>
+      <div className="h-[260px] lg:h-[380px] rounded-3xl overflow-hidden"><Photo k="songthaew" /></div>
+    </main>
   );
 }

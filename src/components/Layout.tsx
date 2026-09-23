@@ -2,6 +2,7 @@ import { NavLink, Link, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useState } from 'react';
 import { Icon } from './Icon';
 import { Logo, ExtLink } from './ui';
+import { ErrorBoundary } from './ErrorBoundary';
 import { useApp } from '../state';
 import { SEASON_TIPS } from '../data/seasons';
 import { todayISO, monthOf } from '../lib/dates';
@@ -129,11 +130,12 @@ export function Footer() {
 }
 
 export function Shell({ footer = true, tabbar = true }: { footer?: boolean; tabbar?: boolean }) {
+  const { pathname } = useLocation();
   return (
     <div className="min-h-full flex flex-col">
       <button type="button" onClick={() => document.getElementById('main')?.focus()} className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] bg-card px-4 py-2 rounded-full">본문으로 건너뛰기</button>
       <OfflineBar /><Header />
-      <div id="main" tabIndex={-1} className="flex-1 flex flex-col outline-none"><Outlet /></div>
+      <div id="main" tabIndex={-1} className="flex-1 flex flex-col outline-none"><ErrorBoundary key={pathname}><Outlet /></ErrorBoundary></div>
       {footer && <Footer />}
       {tabbar && <TabBar />}
     </div>
