@@ -34,7 +34,7 @@ export function Courses() {
       <section aria-labelledby="cities" className="flex flex-col gap-5">
         <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">추천 소도시 20</h2></div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{CITIES.filter((c) => c.id !== 'bangkok').map((c) => (
-          <article key={c.id} className="lift card rounded-3xl overflow-hidden flex flex-col"><div className="zoom h-40 overflow-hidden"><Photo k={c.photo} /></div>
+          <article key={c.id} className="lift card rounded-3xl overflow-hidden flex flex-col"><div className="zoom aspect-[3/2] overflow-hidden"><Photo k={c.photo} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" /></div>
             <div className="p-4 lg:p-5 flex flex-col gap-2 flex-1"><div className="flex justify-between items-center gap-2"><h3 className="m-0 text-[19px] font-bold">{c.name}</h3><span className="px-2.5 py-1 rounded-full bg-mango-t text-mango-d text-[12px] font-bold inline-flex items-center gap-1 whitespace-nowrap"><Icon name="star" size={13} />혼행 {c.solo}.0</span></div>
               <span className="text-[15px] leading-snug">{c.summary}</span><span className="text-[14px] text-slate leading-snug">{c.point}</span>
               <span className="mt-auto pt-2 flex flex-wrap gap-1.5"><span className="px-2.5 py-1 rounded-full bg-oat text-[12px] font-semibold">{c.region}</span><span className="px-2.5 py-1 rounded-full bg-oat text-[12px] font-semibold">추천 {c.stay}</span>{c.mountainRoad && <span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[12px] font-semibold">산간 도로</span>}</span></div></article>))}</div>
@@ -80,7 +80,7 @@ export function MyTrips() {
       ) : (
         <ul className="m-0 p-0 list-none grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{trips.map((t) => { const c = COURSES.find((x) => x.id === t.courseId)!; const d0 = t.days[0].date; return (
           <li key={t.id} className="card rounded-[26px] overflow-hidden flex flex-col">
-            <Link to={`/trip/${t.id}`} className="block h-40 zoom overflow-hidden"><Photo k={c.photo} /></Link>
+            <Link to={`/trip/${t.id}`} className="block aspect-[16/9] zoom overflow-hidden"><Photo k={c.photo} /></Link>
             <div className="p-5 flex flex-col gap-2">
               <Link to={`/trip/${t.id}`} className="min-h-11 inline-flex items-center text-xl font-extrabold hover:underline">{t.name}</Link>
               <span className="text-[15px]">{d0 ? `${fmtDot(d0)} 출발 · ` : `${t.month}월 · `}{t.nights}박 {t.days.length}일 · 도시 {t.cityIds.filter((x) => x !== 'bangkok').length}곳</span>
@@ -170,9 +170,23 @@ export function TourPage() {
   const { id } = useParams(); const t = tourById(id as TourType);
   if (!t) return <main className="p-10">투어를 찾을 수 없어요.</main>;
   return (
-    <main className="wrap gutter pt-8 pb-28 flex flex-col gap-6"><div className="h-[260px] lg:h-[420px] rounded-[28px] overflow-hidden"><Photo k={t.photo} eager /></div>
-      <Kicker>Local tour</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.03em]">{t.name}</h1><span className="text-[15px]">{t.cities.map((c) => cityById(c).name).join(', ')} · {t.duration} · {t.priceBand}</span>
-      {t.noRiding && <div><Badge kind="noride" /></div>}<h2 className="sr-only">투어 안내</h2><TourBlocks id={t.id} /></main>
+    <main className="wrap gutter pt-8 lg:pt-12 pb-28 flex flex-col gap-8 lg:gap-12">
+      <section className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+        <div className="lg:col-span-7 aspect-[3/2] rounded-[28px] overflow-hidden shadow-lift"><Photo k={t.photo} eager sizes="(min-width: 1024px) 60vw, 100vw" /></div>
+        <div className="lg:col-span-5 flex flex-col gap-4 items-start">
+          <Kicker>Local tour</Kicker>
+          <h1 className="m-0 text-4xl lg:text-[56px] leading-[1.1] font-extrabold tracking-[-0.03em]">{t.name}</h1>
+          <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[16px]">
+            <dt className="text-slate font-semibold">도시</dt><dd className="m-0 font-bold">{t.cities.map((c) => cityById(c).name).join(', ')}</dd>
+            <dt className="text-slate font-semibold">시간</dt><dd className="m-0 font-bold">{t.duration}</dd>
+            <dt className="text-slate font-semibold">요금</dt><dd className="m-0 font-bold">{t.priceBand}</dd>
+          </dl>
+          {t.noRiding && <Badge kind="noride" />}
+          <Btn to="/plan" kind="lagoon" icon="spark">맞춤 일정 만들기</Btn>
+        </div>
+      </section>
+      <h2 className="sr-only">투어 안내</h2><TourBlocks id={t.id} />
+    </main>
   );
 }
 
@@ -185,7 +199,7 @@ export function NotFound() {
         <p className="m-0 text-[16px] leading-relaxed text-slate">찾는 페이지가 없거나 주소가 바뀌었어요. 홈에서 다시 시작하거나 바로 일정을 만들어 보세요.</p>
         <div className="flex flex-col sm:flex-row gap-3"><Btn to="/">홈으로</Btn><Btn to="/plan" kind="line" icon="spark">맞춤 일정 만들기</Btn></div>
       </div>
-      <div className="h-[260px] lg:h-[380px] rounded-3xl overflow-hidden"><Photo k="songthaew" /></div>
+      <div className="aspect-[3/2] rounded-3xl overflow-hidden"><Photo k="songthaew" /></div>
     </main>
   );
 }

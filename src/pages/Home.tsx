@@ -171,10 +171,9 @@ export default function Home() {
 
       {/* 윤리적 로컬 투어 */}
       <section aria-labelledby="ethical" className="wrap gutter pt-14 lg:pt-20 grid lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-        <figure className="zoom m-0 lg:col-span-6 relative h-[380px] lg:h-[520px] rounded-3xl overflow-hidden">
-          <Photo k="elephant" />
-          <span className="absolute left-4 top-4"><Badge kind="noride" /></span>
-          <figcaption className="absolute left-4 right-4 bottom-4 glass rounded-2xl p-4 flex flex-col gap-1"><span className="text-[13px] font-bold text-sage">치앙마이 · 카오속 보호소</span><span className="text-[18px] font-bold">“코끼리와 나누는 조용한 교감”</span><span className="text-[14px] text-slate">혼자여도 어색하지 않은 소규모 반나절·하루 프로그램</span></figcaption>
+        <figure className="m-0 lg:col-span-6 relative flex flex-col gap-3">
+          <div className="zoom relative aspect-[3/2] lg:aspect-[4/3] rounded-3xl overflow-hidden"><Photo k="elephant" /><span className="absolute left-4 top-4"><Badge kind="noride" /></span></div>
+          <figcaption className="card lg:glass lg:absolute lg:left-4 lg:right-4 lg:bottom-4 rounded-2xl p-4 flex flex-col gap-1"><span className="text-[13px] font-bold text-sage">치앙마이 · 카오속 보호소</span><span className="text-[18px] font-bold">“코끼리와 나누는 조용한 교감”</span><span className="text-[14px] text-slate">혼자여도 어색하지 않은 소규모 반나절·하루 프로그램</span></figcaption>
         </figure>
         <div className="lg:col-span-6 flex flex-col gap-5">
           <span className="kicker !text-sage">Ethical &amp; restorative travel</span>

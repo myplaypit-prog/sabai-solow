@@ -107,7 +107,7 @@ function Stays({ trip, city, setCity, onPick }: { trip: TripT; city: string; set
       {list.length === 0 ? <div className="card rounded-3xl p-6 flex flex-col gap-2"><span className="text-lg font-extrabold">조건에 맞는 숙소가 없어요</span><span className="text-[15px]">예산을 올리거나 가격대 필터를 ‘전체’로 바꿔 보세요.</span></div> :
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">{list.map((s) => (
           <article key={s.id} className="card rounded-[26px] overflow-hidden flex flex-col">
-            <div className="h-44 relative"><Photo k={s.photo} /><span className="absolute left-3 top-3 z-[4]"><Badge kind="rec" size="sm">{BAND_LABEL[s.band]}</Badge></span></div>
+            <div className="aspect-[3/2] relative"><Photo k={s.photo} /><span className="absolute left-3 top-3 z-[4]"><Badge kind="rec" size="sm">{BAND_LABEL[s.band]}</Badge></span></div>
             <div className="p-5 flex flex-col gap-2.5 flex-1">
               <h3 className="m-0 text-lg font-extrabold">{s.name}</h3>
               <span className="text-[15px]">구글맵 ★ {s.rating} · 리뷰 {s.reviews}</span>
@@ -260,7 +260,7 @@ export default function Trip() {
         {tab === '투어' && (
           <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">{TOURS.map((t) => { const here = t.cities.filter((c) => trip.cityIds.includes(c)); return (
             <button key={t.id} type="button" onClick={() => setTour(t.id)} className={`lift text-left card rounded-[26px] overflow-hidden flex flex-col ${here.length ? '' : 'opacity-60'}`}>
-              <span className="h-48 block zoom overflow-hidden"><Photo k={t.photo} /></span>
+              <span className="aspect-[3/2] block zoom overflow-hidden"><Photo k={t.photo} /></span>
               <span className="p-5 flex flex-col gap-2"><span className="text-xl font-extrabold">{t.name}</span><span className="text-[15px]">{here.length ? `이 일정에서: ${here.map(cname).join(', ')}` : `가능한 도시: ${t.cities.map(cname).join(', ')}`}</span><span className="text-sm text-muted">{t.duration} · {t.priceBand}</span>
                 <span className="flex gap-1.5 flex-wrap">{trip.notes?.[`tour:${t.id}`] && <Badge kind="safe" size="sm">일정에 담음</Badge>}{t.noRiding && <Badge kind="noride" size="sm" />}{rainy && t.rainyCaution && <Badge kind="warn" size="sm">우기 주의</Badge>}</span></span>
             </button>); })}</div>

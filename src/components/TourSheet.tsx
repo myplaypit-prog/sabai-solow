@@ -32,7 +32,7 @@ export function TourSheet({ id, onClose, onAdd, rainy, context, added = false }:
       <button type="button" aria-label="닫기" onClick={onClose} className="fixed inset-0 bg-[rgba(15,22,40,.55)] cursor-default" />
       <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-title" className="rise relative w-full lg:w-[1040px] max-h-[92vh] lg:max-h-none overflow-y-auto rounded-t-[32px] lg:rounded-[36px] bg-cloud shadow-2xl outline-none">
         <div className="lg:hidden flex justify-center pt-2.5 pb-1.5"><span className="w-12 h-[5px] rounded-full bg-putty" /></div>
-        <div className="relative grid lg:grid-cols-[1.6fr_1fr] gap-2 p-2 h-[230px] lg:h-[380px]">
+        <div className="relative grid lg:grid-cols-2 gap-2 p-2 h-[230px] lg:h-[340px]">
           <div className="zoom rounded-3xl lg:rounded-[28px_12px_12px_12px] overflow-hidden"><Photo k={t.photo} /></div>
           <div className="hidden lg:block zoom rounded-[12px_28px_12px_12px] overflow-hidden"><Photo k={t.photo2} /></div>
           <button type="button" aria-label="닫기" onClick={onClose} className="absolute top-4 right-4 lg:top-[22px] lg:right-[22px] w-11 h-11 lg:w-[52px] lg:h-[52px] rounded-full bg-paper line grid place-items-center"><Icon name="x" size={22} sw={2.4} /></button>

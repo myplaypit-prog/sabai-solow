@@ -29,7 +29,7 @@ export function BigCourse({ c, wide }: { c: Course; wide?: boolean }) {
   const s = courseSeason(c); const st = courseStats(c);
   return (
     <article className={`lift card rounded-3xl overflow-hidden flex flex-col ${wide ? 'lg:col-span-7' : 'lg:col-span-5'}`}>
-      <Link to={`/plan?course=${c.id}`} className="zoom relative block h-[240px] lg:h-[300px] overflow-hidden" aria-label={`${c.name} 코스로 일정 시작`}>
+      <Link to={`/plan?course=${c.id}`} className="zoom relative block h-[240px] lg:h-[380px] overflow-hidden" aria-label={`${c.name} 코스로 일정 시작`}>
         <Photo k={c.photo} />
         <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[rgba(15,22,40,.78)] to-transparent" aria-hidden="true" />
         <span className="absolute left-4 top-4 flex gap-2 flex-wrap"><span className="px-3 py-1 rounded-full bg-card/95 text-[12px] font-bold text-primary">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
