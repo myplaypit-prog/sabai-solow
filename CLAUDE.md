@@ -10,6 +10,7 @@
 - 접근성: 터치 영역 44px 이상(`min-h-11`), 본문 16px 이상, 배지는 색+글자+아이콘, 폼은 label 연결.
 - 문구: 짧은 존댓말("~해요"), 경고는 담담하게, 느낌표·과장 금지.
 - 모르는 값: 프로토타입에서는 화면 확인용 **임시값**을 넣고 `(임시)`·`(샘플)`을 붙이거나 `sample: true`로 표시. 실제 업체·숙소 이름은 쓰지 않음. 확인된 값으로 바꿀 때 표시를 뗄 것.
+- 예상 총경비는 `src/lib/cost.ts`의 `COST_RULES`(항공·구간 요금·하루 식비, 모두 임시값)로 계산. 확인된 값으로 바꾸면 코스 카드·일정 화면이 함께 바뀜.
 - 데이터는 `src/data/*`, 규칙은 `src/lib/planner.ts`. 규칙을 바꾸면 `npm test`를 통과시킬 것.
 - 사진은 `public/photos`에 넣고 `src/data/photo-meta.json`·`PHOTO_ALT`에 출처·대체텍스트를 함께 기록. 넣거나 바꾼 뒤 `python scripts/make-webp.py`로 WebP(640·1280px)를 다시 만들 것.
 - 글꼴은 모두 사이트 안(`src/styles`)에 둠. Pretendard는 쓰는 글자만 남긴 파일이라, 새 문구가 네모(□)로 보이면 `python scripts/subset-font.py`(fonttools·brotli 필요)를 다시 실행. 원본은 `fonts-src/`.

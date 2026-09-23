@@ -221,7 +221,7 @@ export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string,
   if (i.safe) warnings.push('안심 일정: 도시 도착은 21시 전, 야간버스 대신 침대칸, 하루 이동 5시간 이하를 우선해요.');
   const cityIds = [...new Set(days.map((d) => d.city))];
   return {
-    id: Math.random().toString(36).slice(2, 10), userId, createdAt: new Date().toISOString(), name: i.cities?.length ? `${stops.filter((x) => x.nights > 0).slice(0, 3).map((x) => cityById(x.city).name).join('·')} 나만의 루트` : course.name, courseId: course.id, inputs: i, days, month: m,
+    id: Math.random().toString(36).slice(2, 10), userId, createdAt: new Date().toISOString(), name: i.cities?.length ? `${stops.filter((x) => x.nights > 0).slice(0, 3).map((x) => cityById(x.city).name).join('·')} 나만의 루트` : `${course.title.replace(/\s*\d+일$/, '')} ${days.length}일`, courseId: course.id, inputs: i, days, month: m,
     totalHours: Math.round(allLegs.reduce((a, l) => a + l.option.hours, 0)), nights: days.length - 1, cityIds, warnings, notes: {}, stops,
   };
 }

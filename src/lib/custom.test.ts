@@ -36,3 +36,14 @@ describe('도시 순서', () => {
     expect(Math.abs(o.indexOf('chiangmai') - o.indexOf('pai'))).toBe(1);
   });
 });
+
+import { estimateCost } from './cost';
+describe('예상 총경비', () => {
+  it('항목 합이 총액이고, 일정 이름은 감성 제목에 실제 일수', () => {
+    const t = planTrip({ ...base, days: 7, courseId: 'E' }, 'u');
+    const v = estimateCost(t);
+    expect(v.total).toBe(v.flight + v.lodging + v.transport + v.food + v.tours);
+    expect(v.transport).toBeGreaterThan(0);
+    expect(t.name).toBe('치앙칸 메콩강변 목조 마을과 노을 명상 7일');
+  });
+});

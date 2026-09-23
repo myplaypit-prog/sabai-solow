@@ -9,6 +9,8 @@ import { STAYS, BAND_LABEL, mapsSearch, stayById, stayName, cheapestStay } from 
 import { regionSeason } from '../data/seasons';
 import { prepareOffline } from '../lib/offline';
 import { decodeShare, shareUrl } from '../lib/share';
+import { estimateCost, COST_LABELS } from '../lib/cost';
+import { courseById } from '../data/courses';
 import { BOOKING } from '../data/legs';
 import { fmtDot, weekday, fmtMD, addDays } from '../lib/dates';
 import { Badge, Kicker, Photo, ExtLink, seasonKind } from '../components/ui';
@@ -207,9 +209,8 @@ export default function Trip() {
   // 머리 배지: 일정 도시 중 가장 주의가 필요한 계절(없으면 첫 도시)
   const seasons = trip.cityIds.filter((c) => c !== 'bangkok').map((c) => regionSeason(cityById(c).region, trip.month));
   const headSeason = seasons.find((s) => s.badge === 'warn') ?? seasons.find((s) => s.badge === 'save') ?? seasons[0] ?? regionSeason('중부', trip.month);
-  // 예상 숙박비: 고른 숙소 가격, 안 고른 도시는 예산 안 최저가(임시 데이터 기준 어림)
-  const lodging = trip.days.filter((d) => d.stay).reduce((a, d) => a + (stayById(trip.notes?.[`stay:${d.city}`])?.price ?? cheapestStay(d.city, trip.inputs.budget)?.price ?? 0), 0);
   const cities = trip.cityIds.filter((c) => c !== 'bangkok');
+  const cost = estimateCost(trip, courseById(trip.courseId)?.start);
   const actions = shared ? [
     { i: 'save', t: '내 일정에 저장', s: '내 일정에 저장', f: keep },
     { i: 'link', t: '링크 공유', s: '공유', f: copyLink },
@@ -231,9 +232,9 @@ export default function Trip() {
             <button key={a.i} type="button" onClick={a.f} className={`min-h-16 lg:min-h-[52px] rounded-2xl lg:rounded-full lg:px-5 flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 text-xs lg:text-base font-extrabold line ${k === 0 ? 'bg-lagoon text-on-lagoon shadow-none' : 'bg-paper'}`}><Icon name={a.i} size={20} /><span className="lg:hidden">{a.s}</span><span className="hidden lg:inline">{a.t}</span></button>))}</div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 rounded-[22px] card overflow-hidden">
-          {[['기간', first.date ? `${fmtDot(first.date)} – ${fmtDot(last.date!)}` : `${trip.month}월 · ${trip.days.length}일`, `${trip.nights}박 ${trip.days.length}일`], ['도시', `${cities.length}곳`, cities.map(cname).join(' → ')], ['총 이동', `약 ${trip.totalHours}시간`, trip.days.some((d) => d.legs.some((l) => l.option.overnight)) ? '야간열차 포함' : '낮 이동'], ['예상 숙박비', lodging ? `약 ${Math.round(lodging / 10000)}만원` : '—', lodging ? '고른 숙소·예산 안 최저가 · 임시 데이터' : `1박 ${trip.inputs.budget}만원 이하 기준`]].map(([a, b, c], i) => (
+          {[['기간', first.date ? `${fmtDot(first.date)} – ${fmtDot(last.date!)}` : `${trip.month}월 · ${trip.days.length}일`, `${trip.nights}박 ${trip.days.length}일`], ['도시', `${cities.length}곳`, cities.map(cname).join(' → ')], ['총 이동', `약 ${trip.totalHours}시간`, trip.days.some((d) => d.legs.some((l) => l.option.overnight)) ? '야간열차 포함' : '낮 이동'], ['예상 총경비 · 1인', `약 ${cost.total}만원`, COST_LABELS.map(([k, l]) => `${l} ${cost[k]}`).join(' · ') + ' (만원 · 임시)']].map(([a, b, c], i) => (
             <div key={a} className={`flex flex-col gap-1 p-3.5 lg:px-[22px] lg:py-[18px] ${i % 2 ? 'border-l-[1.5px] rule' : ''} ${i === 2 ? 'lg:border-l-[1.5px]' : ''} ${i > 1 ? 'border-t-[1.5px] lg:border-t-0 rule' : ''}`}>
-              <span className="text-[13px] font-extrabold tracking-[.06em] text-muted">{a}</span><span className="font-bold text-[26px] lg:text-4xl leading-none">{b}</span><span className="text-sm text-muted truncate">{c}</span></div>))}
+              <span className="text-[13px] font-extrabold tracking-[.06em] text-muted">{a}</span><span className="font-bold text-[26px] lg:text-4xl leading-none">{b}</span><span className={`text-sm text-muted ${i === 3 ? 'leading-snug' : 'truncate'}`}>{c}</span></div>))}
         </div>
         <div className="rounded-[18px] bg-butter text-fixedink">
           <button type="button" aria-expanded={periodOpen} onClick={() => setPeriodOpen(!periodOpen)} className="w-full min-h-[52px] px-[18px] py-3 flex items-center gap-2.5 flex-wrap text-left text-[15px] font-bold"><Icon name="info" size={18} /><span className="font-extrabold">이 기간의 여행 정보</span><span className="hidden lg:inline">{trip.warnings[0]}</span><span className={`ml-auto ${periodOpen ? 'rotate-180' : ''}`}><Icon name="chevd" size={18} /></span></button>

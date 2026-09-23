@@ -6,6 +6,8 @@ import { Icon } from './Icon';
 import { cityById } from '../data/cities';
 import { regionSeason } from '../data/seasons';
 import { todayISO, monthOf } from '../lib/dates';
+import { planTrip, DEFAULT_INPUTS } from '../lib/planner';
+import { estimateCost, COST_LABELS, type CostBreakdown } from '../lib/cost';
 
 export const stayCount = (c: Course) => c.stops.filter((s) => s.nights > 0 && s.city !== 'bangkok').reduce((a, s) => (a.includes(s.city) ? a : [...a, s.city]), [] as string[]).length;
 /** 이번 달 기준 코스 배지: 코스 도시 중 가장 주의가 필요한 계절 */
@@ -25,15 +27,32 @@ export function courseStats(c: Course) {
   return { nights, avg: nights ? Math.round(lodging / nights / 1000) / 10 : 0, total: Math.round(lodging / 10000), solo: solo.toFixed(1) };
 }
 
-/** 숙박비 어림(샘플 숙소·1박 6만원 이하 기준 최저가 합) */
+/** 코스 카드용 예상 총경비: 코스 기본 일수·1박 6만원 이하·이번 달 기준으로 한 번 계산해 둬요 */
+const costCache = new Map<string, CostBreakdown>();
+export function courseCost(c: Course): CostBreakdown {
+  let v = costCache.get(c.id);
+  if (!v) {
+    const t = planTrip({ ...DEFAULT_INPUTS, whenMode: 'month', month: monthOf(todayISO()), start: undefined, end: undefined, days: c.days, budget: 6, courseId: c.id }, 'card');
+    v = estimateCost(t, c.start); costCache.set(c.id, v);
+  }
+  return v;
+}
 function Price({ c, big }: { c: Course; big?: boolean }) {
-  const st = courseStats(c);
-  if (!st.total) return null;
+  const v = courseCost(c);
   return (
     <span className="flex flex-col items-end shrink-0 text-right">
-      <span className="text-[13px] font-semibold text-slate">숙박비 (임시)</span>
-      <b className={`${big ? 'text-[22px] lg:text-[24px]' : 'text-[22px]'} font-extrabold text-primary leading-tight whitespace-nowrap`}>약 {st.total}만원~</b>
+      <span className="text-[13px] font-semibold text-slate">예상 총경비 · 1인</span>
+      <b className={`${big ? 'text-[22px] lg:text-[26px]' : 'text-[22px]'} font-extrabold text-primary leading-tight whitespace-nowrap`}>약 {v.total}만원</b>
     </span>
+  );
+}
+/** 항목별 경비(만원) 한 줄 */
+export function CostLine({ v, className = '' }: { v: CostBreakdown; className?: string }) {
+  return (
+    <p className={`m-0 text-[13px] text-slate flex flex-wrap gap-x-2.5 gap-y-0.5 ${className}`}>
+      {COST_LABELS.map(([k, l]) => <span key={k} className="whitespace-nowrap">{l} <b className="font-bold text-marine">{v[k]}</b></span>)}
+      <span className="whitespace-nowrap">(만원 · 임시 어림)</span>
+    </p>
   );
 }
 
@@ -61,6 +80,7 @@ export function BigCourse({ c, wide }: { c: Course; wide?: boolean }) {
           <Price c={c} big />
         </div>
         <p className="m-0 text-[16px] leading-relaxed text-slate">{c.copy}</p>
+        <CostLine v={courseCost(c)} />
         <div className="mt-auto pt-2">
           <div className="rounded-2xl bg-oat p-3 pl-4 flex flex-wrap items-center justify-between gap-3">
             <ul className="m-0 p-0 list-none flex flex-wrap gap-x-4 gap-y-1.5 text-[14px] font-semibold">{c.feats.map(([ic, t]) => <li key={t} className="flex items-center gap-1.5"><span className="text-primary"><Icon name={ic} size={16} /></span>{t}</li>)}</ul>
@@ -85,6 +105,7 @@ export function TextCourse({ c }: { c: Course }) {
         <Price c={c} />
       </div>
       <p className="m-0 text-[16px] leading-relaxed text-slate">{c.copy}</p>
+      <CostLine v={courseCost(c)} />
       <div className="mt-auto pt-3 flex flex-wrap items-center justify-between gap-3 border-t rule">
         <ul className="m-0 p-0 list-none flex flex-wrap gap-x-4 gap-y-1 text-[14px] font-semibold">{c.feats.map(([ic, t]) => <li key={t} className="flex items-center gap-1.5"><span className="text-sage"><Icon name={ic} size={16} /></span>{t}</li>)}</ul>
         <Link to={`/plan?course=${c.id}`} className="min-h-11 inline-flex items-center gap-1 text-[15px] font-bold text-primary">일정 짜기 <Icon name="arrow" size={16} sw={2.4} /></Link>
