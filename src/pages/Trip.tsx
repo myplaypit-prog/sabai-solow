@@ -236,7 +236,7 @@ export default function Trip() {
             </div>
             <aside className="hidden lg:flex lg:col-span-5 sticky top-6 flex-col gap-3.5">
               <div className="grain h-[760px] rounded-[28px] overflow-hidden line"><TripMap trip={trip} /></div>
-              <div className="flex justify-between items-center text-sm text-muted"><span>정적 지도(프로토타입) · 지도 데이터 © OpenStreetMap 기여자</span>{online && <ExtLink href={mapsSearch(cities.map(cname).join(' '))} className="min-h-11 inline-flex items-center gap-1.5 font-extrabold text-lagoon">구글맵에서 보기 <Icon name="ext" size={16} /></ExtLink>}</div>
+              <div className="flex justify-between items-center text-sm text-muted"><span>지도는 대략적인 위치예요 · 실제 길은 구글맵에서 확인하세요</span>{online && <ExtLink href={mapsSearch(cities.map(cname).join(' '))} className="min-h-11 inline-flex items-center gap-1.5 font-extrabold text-lagoon">구글맵에서 보기 <Icon name="ext" size={16} /></ExtLink>}</div>
             </aside>
           </div>
         )}
