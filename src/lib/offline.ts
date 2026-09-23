@@ -2,7 +2,7 @@ import type { Trip } from './planner';
 import { cityById } from '../data/cities';
 import { tourById } from '../data/tours';
 import { STAYS } from '../data/stays';
-import { photoSrc } from '../data/photos';
+import { photoWebp } from '../data/photos';
 
 export type OfflineResult = { kind: 'ready'; total: number; failed: number } | { kind: 'unsupported' } | { kind: 'error' };
 
@@ -25,10 +25,12 @@ export async function prepareOffline(t: Trip, timeoutMs = 15000): Promise<Offlin
     const reg = await navigator.serviceWorker.ready;
     const sw = reg.active;
     if (!sw) return { kind: 'error' };
+    // 화면을 나눠 받으므로, 오프라인에서 열 화면(일정·인쇄·내 일정·안심 팩) 파일을 먼저 받아 둬요
+    await Promise.all([import('../pages/Trip'), import('../pages/Misc')]).catch(() => undefined);
     const assets = performance.getEntriesByType('resource')
       .map((e) => e.name)
       .filter((u) => { try { return new URL(u).origin === location.origin; } catch { return false; } });
-    const urls = [...new Set([new URL('./', location.href).href, ...assets, ...tripPhotoKeys(t).map((k) => new URL(photoSrc(k), location.href).href)])];
+    const urls = [...new Set([new URL('./', location.href).href, ...assets, ...tripPhotoKeys(t).flatMap((k) => photoWebp(k).map((u) => new URL(u, location.href).href))])];
     return await new Promise<OfflineResult>((resolve) => {
       const timer = window.setTimeout(() => { navigator.serviceWorker.removeEventListener('message', onMsg); resolve({ kind: 'ready', total: urls.length, failed: -1 }); }, timeoutMs);
       function onMsg(ev: MessageEvent) {

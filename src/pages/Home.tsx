@@ -137,7 +137,7 @@ export default function Home() {
       <section aria-label="오늘의 추천 장면" className="wrap gutter pt-6 lg:pt-8">
         <figure className="m-0 relative flex flex-col gap-3">
           <div className="zoom relative aspect-[43/24] rounded-3xl overflow-hidden shadow-lift">
-            <Photo k="cafe" eager />
+            <Photo k="cafe" eager sizes="(min-width: 1280px) 1184px, 100vw" />
           </div>
           <figcaption className="card lg:glass lg:absolute lg:left-6 lg:bottom-6 lg:max-w-[400px] rounded-2xl p-4 flex flex-col gap-2">
             <span className="flex flex-wrap gap-2"><span className="px-3 py-1.5 rounded-full bg-oat text-[13px] font-bold">이번 달 추천: {top.id} · {top.name}</span><span className="px-3 py-1.5 rounded-full bg-mango text-fixedink text-[13px] font-bold inline-flex items-center gap-1"><Icon name="star" size={14} />혼행 적합 {heroCity.solo}.0</span></span>

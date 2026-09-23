@@ -1,7 +1,7 @@
 import { Link, type LinkProps } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
-import { PHOTO_ALT, photoSrc } from '../data/photos';
+import { PHOTO_ALT, photoSrc, photoSrcSet } from '../data/photos';
 import type { BadgeKind } from '../lib/planner';
 
 type BK = BadgeKind | 'safe' | 'noride';
@@ -22,8 +22,9 @@ export function Badge({ kind, children, size = 'md' }: { kind: BK; children?: Re
   const sz = size === 'sm' ? 'text-[13px] px-2.5 py-1 gap-1.5' : size === 'lg' ? 'text-base px-3.5 py-2 gap-2' : 'text-sm px-3 py-1.5 gap-1.5';
   return <span className={`inline-flex items-center rounded-full font-bold leading-tight whitespace-nowrap ${sz} ${b.cls}`}><Icon name={b.icon} size={size === 'sm' ? 14 : 16} sw={2.2} />{children ?? b.label}</span>;
 }
-export function Photo({ k, className = '', pos = 'center', eager = false }: { k: string; className?: string; pos?: string; eager?: boolean }) {
-  return <img src={photoSrc(k)} alt={PHOTO_ALT[k] ?? ''} loading={eager ? 'eager' : 'lazy'} decoding="async" className={`block w-full h-full object-cover ${className}`} style={{ objectPosition: pos }} />;
+/** sizes: 화면에서 차지하는 폭. 휴대폰은 640px WebP, 넓은 화면은 1280px WebP를 받아요 */
+export function Photo({ k, className = '', pos = 'center', eager = false, sizes = '(min-width: 1024px) 50vw, 100vw' }: { k: string; className?: string; pos?: string; eager?: boolean; sizes?: string }) {
+  return <picture className="contents"><source type="image/webp" srcSet={photoSrcSet(k)} sizes={sizes} /><img src={photoSrc(k)} alt={PHOTO_ALT[k] ?? ''} loading={eager ? 'eager' : 'lazy'} decoding="async" className={`block w-full h-full object-cover ${className}`} style={{ objectPosition: pos }} /></picture>;
 }
 /** Stitch 로고의 S 마크: 둥근 사각 테두리 + 끝이 말린 S (saffron) */
 export function LogoMark({ size = 36, className = '' }: { size?: number; className?: string }) {

@@ -50,7 +50,7 @@ export function BigCourse({ c, wide }: { c: Course; wide?: boolean }) {
 
 export function TextCourse({ c }: { c: Course }) {
   const s = courseSeason(c); const st = courseStats(c);
-  const hl = c.stops.filter((x) => x.nights > 0).slice(0, 3).map((x) => `${cityById(x.city).name} ${cityById(x.city).highlights[0] ?? ''}`.trim());
+  const hl = [...new Set(c.stops.filter((x) => x.nights > 0).map((x) => x.city))].slice(0, 3).map((id) => `${cityById(id).name} ${cityById(id).highlights[0] ?? ''}`.trim()); // 같은 도시를 두 번 들르는 코스는 한 번만
   return (
     <article className="lift card rounded-3xl p-5 lg:p-6 flex flex-col gap-3 lg:col-span-6">
       <div className="flex flex-wrap items-center gap-2"><span className="px-3 py-1 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></div>

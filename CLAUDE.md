@@ -11,6 +11,8 @@
 - 문구: 짧은 존댓말("~해요"), 경고는 담담하게, 느낌표·과장 금지.
 - 모르는 값: 프로토타입에서는 화면 확인용 **임시값**을 넣고 `(임시)`·`(샘플)`을 붙이거나 `sample: true`로 표시. 실제 업체·숙소 이름은 쓰지 않음. 확인된 값으로 바꿀 때 표시를 뗄 것.
 - 데이터는 `src/data/*`, 규칙은 `src/lib/planner.ts`. 규칙을 바꾸면 `npm test`를 통과시킬 것.
-- 사진은 `public/photos`에 넣고 `src/data/photo-meta.json`·`PHOTO_ALT`에 출처·대체텍스트를 함께 기록.
+- 사진은 `public/photos`에 넣고 `src/data/photo-meta.json`·`PHOTO_ALT`에 출처·대체텍스트를 함께 기록. 넣거나 바꾼 뒤 `python scripts/make-webp.py`로 WebP(640·1280px)를 다시 만들 것.
+- 글꼴은 모두 사이트 안(`src/styles`)에 둠. Pretendard는 쓰는 글자만 남긴 파일이라, 새 문구가 네모(□)로 보이면 `python scripts/subset-font.py`(fonttools·brotli 필요)를 다시 실행. 원본은 `fonts-src/`.
+- 화면(pages)은 `App.tsx`에서 `lazy`로 나눠 받음. 오프라인에서 열 화면을 추가하면 `lib/offline.ts`의 미리 받기 목록에도 넣을 것.
 - 기획·설계 문서는 `docs/`(기획안.md·설계.md). 화면·규칙을 바꾸면 문서와 어긋나지 않는지 확인.
 - 커밋 메시지: `feat:` `fix:` `docs:` `refactor:` `chore:` 접두어 + 한국어 설명. 작업 단위마다 커밋하고 `origin main`에 푸시.

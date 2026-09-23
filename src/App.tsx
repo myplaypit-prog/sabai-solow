@@ -1,13 +1,26 @@
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { tourById } from './data/tours';
 import { AppProvider } from './state';
 import { Shell } from './components/Layout';
 import Home from './pages/Home';
-import Plan from './pages/Plan';
-import Trip from './pages/Trip';
-import { Login, Signup, Verify, Reset } from './pages/Auth';
-import { Courses, Season, MyTrips, Safety, PrintView, Credits, TourPage, NotFound } from './pages/Misc';
+// 홈만 바로 받고, 나머지 화면은 들어갈 때 받아요(첫 화면을 가볍게)
+const Plan = lazy(() => import('./pages/Plan'));
+const Trip = lazy(() => import('./pages/Trip'));
+const auth = () => import('./pages/Auth');
+const Login = lazy(() => auth().then((m) => ({ default: m.Login })));
+const Signup = lazy(() => auth().then((m) => ({ default: m.Signup })));
+const Verify = lazy(() => auth().then((m) => ({ default: m.Verify })));
+const Reset = lazy(() => auth().then((m) => ({ default: m.Reset })));
+const misc = () => import('./pages/Misc');
+const Courses = lazy(() => misc().then((m) => ({ default: m.Courses })));
+const Season = lazy(() => misc().then((m) => ({ default: m.Season })));
+const MyTrips = lazy(() => misc().then((m) => ({ default: m.MyTrips })));
+const Safety = lazy(() => misc().then((m) => ({ default: m.Safety })));
+const PrintView = lazy(() => misc().then((m) => ({ default: m.PrintView })));
+const Credits = lazy(() => misc().then((m) => ({ default: m.Credits })));
+const TourPage = lazy(() => misc().then((m) => ({ default: m.TourPage })));
+const NotFound = lazy(() => misc().then((m) => ({ default: m.NotFound })));
 
 const TITLES: Record<string, string> = {
   '/': '혼자 누리는 태국 소도시 쉼표 여행', '/plan': '맞춤 일정 플래너', '/season': '시기 가이드', '/courses': '추천 코스 8선',
@@ -51,7 +64,7 @@ export default function App() {
             <Route path="/verify" element={<Verify />} />
             <Route path="/reset-password" element={<Reset />} />
           </Route>
-          <Route path="/trip/:id/print" element={<PrintView />} />
+          <Route path="/trip/:id/print" element={<Suspense fallback={null}><PrintView /></Suspense>} />
           <Route element={<Shell />}><Route path="*" element={<NotFound />} /></Route>
         </Routes>
       </HashRouter>

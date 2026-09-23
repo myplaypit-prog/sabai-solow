@@ -1,5 +1,5 @@
 import { NavLink, Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Icon } from './Icon';
 import { Logo, ExtLink } from './ui';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -135,7 +135,7 @@ export function Shell({ footer = true, tabbar = true }: { footer?: boolean; tabb
     <div className="min-h-full flex flex-col">
       <button type="button" onClick={() => document.getElementById('main')?.focus()} className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] bg-card px-4 py-2 rounded-full">본문으로 건너뛰기</button>
       <OfflineBar /><Header />
-      <div id="main" tabIndex={-1} className="flex-1 flex flex-col outline-none"><ErrorBoundary key={pathname}><Outlet /></ErrorBoundary></div>
+      <div id="main" tabIndex={-1} className="flex-1 flex flex-col outline-none"><ErrorBoundary key={pathname}><Suspense fallback={<div className="flex-1 min-h-[60vh]" aria-busy="true" />}><Outlet /></Suspense></ErrorBoundary></div>
       {footer && <Footer />}
       {tabbar && <TabBar />}
     </div>

@@ -11,6 +11,9 @@ export const PHOTO_ALT: Record<string, string> = {
   cafe: '열대 정원 카페의 나무 테이블에서 혼자 쉬는 여행자',
 };
 export const photoSrc = (k: string) => `./photos/${k}.jpg`;
+/** WebP(640px·1280px). scripts/make-webp.py가 jpg에서 만들어요 */
+export const photoWebp = (k: string) => [`./photos/${k}-640.webp`, `./photos/${k}.webp`];
+export const photoSrcSet = (k: string) => { const [s, b] = photoWebp(k); return `${s} 640w, ${b} 1280w`; };
 /** Google Stitch로 만든 AI 생성 이미지(실제 장소 사진이 아님) */
 export const GENERATED: { key: string; note: string }[] = [{ key: 'cafe', note: 'Google Stitch 생성 이미지(AI) · 홈 첫 화면' }];
 export const ALL_CREDITS = Object.entries(meta as Record<string, { user: string; id: string }>).map(([k, m]) => ({ key: k, name: m.user, url: `https://unsplash.com/photos/${m.id}` }));
