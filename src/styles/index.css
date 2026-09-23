@@ -15,7 +15,7 @@
  * *-t: 배지·면 배경, *-d: 그 위 글자. night: 어두운 띠(다크 모드에서도 어두움).
  */
 :root {
-  --linen: 250 247 242; --oat: 244 239 230; --card: 255 255 255; --hair: 232 223 211; --hair-2: 216 204 189;
+  --logo: 74 74 74; --linen: 250 247 242; --oat: 244 239 230; --card: 255 255 255; --hair: 232 223 211; --hair-2: 216 204 189;
   --marine: 27 42 74; --slate: 83 99 127;
   --primary: 184 67 28; --primary-h: 156 56 21; --on-primary: 255 255 255;
   --saffron: 224 90 43; --saffron-t: 253 238 233;
@@ -28,7 +28,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --linen: 18 24 41; --oat: 35 44 66; --card: 27 35 54; --hair: 46 56 82; --hair-2: 58 69 98;
+    --logo: 238 241 247; --linen: 18 24 41; --oat: 35 44 66; --card: 27 35 54; --hair: 46 56 82; --hair-2: 58 69 98;
     --marine: 238 241 247; --slate: 169 180 200;
     --primary: 240 122 77; --primary-h: 246 146 108; --on-primary: 27 18 8;
     --saffron: 245 135 92; --saffron-t: 58 34 25;
@@ -41,7 +41,7 @@
   }
 }
 :root[data-theme='dark'] {
-  --linen: 18 24 41; --oat: 35 44 66; --card: 27 35 54; --hair: 46 56 82; --hair-2: 58 69 98;
+  --logo: 238 241 247; --linen: 18 24 41; --oat: 35 44 66; --card: 27 35 54; --hair: 46 56 82; --hair-2: 58 69 98;
   --marine: 238 241 247; --slate: 169 180 200;
   --primary: 240 122 77; --primary-h: 246 146 108; --on-primary: 27 18 8;
   --saffron: 245 135 92; --saffron-t: 58 34 25;

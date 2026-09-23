@@ -10,7 +10,7 @@ export default {
     extend: {
       colors: {
         // 새 토큰
-        linen: v('linen'), oat: v('oat'), card: v('card'), hair: v('hair'), 'hair-2': v('hair-2'),
+        logo: v('logo'), linen: v('linen'), oat: v('oat'), card: v('card'), hair: v('hair'), 'hair-2': v('hair-2'),
         marine: v('marine'), slate: v('slate'),
         primary: v('primary'), 'primary-h': v('primary-h'), 'on-primary': v('on-primary'), saffron: v('saffron'), 'saffron-t': v('saffron-t'),
         sage: v('sage'), 'sage-t': v('sage-t'), mango: v('mango'), 'mango-t': v('mango-t'), 'mango-d': v('mango-d'),
@@ -25,7 +25,8 @@ export default {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Pretendard', '-apple-system', 'Apple SD Gothic Neo', 'Malgun Gothic', 'sans-serif'],
         serif: ['"Plus Jakarta Sans"', 'Pretendard', 'sans-serif'],
-        grot: ['"Bricolage Grotesque"', 'Pretendard', 'sans-serif'],
+        logo: ['Quicksand', 'Pretendard', 'sans-serif'],
+        grot: ['Quicksand', 'Pretendard', 'sans-serif'],
       },
       boxShadow: {
         soft: '0 8px 24px -4px rgba(27,42,74,.05), 0 2px 6px -1px rgba(224,90,43,.03)',
