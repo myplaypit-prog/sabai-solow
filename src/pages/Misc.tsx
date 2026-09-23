@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useApp } from '../state';
 import { COURSES } from '../data/courses';
 import { CITIES, cityById } from '../data/cities';
@@ -15,26 +15,29 @@ import type { Trip } from '../lib/planner';
 import type { TourType } from '../data/types';
 import { Badge, Btn, Kicker, Photo, ExtLink } from '../components/ui';
 import { Icon } from '../components/Icon';
-import { BigCourse, TextCourse } from '../components/CourseCards';
+import { BigCourse, PickCitiesCard, ZONES } from '../components/CourseCards';
 import { PeriodPanel } from '../components/PeriodPanel';
 import { Timeline, TipCards } from '../components/SeasonTips';
 import { TourBlocks } from '../components/TourSheet';
 
 export function Courses() {
-  const order = 'ECABDFGH'.split('').map((id) => COURSES.find((c) => c.id === id)!);
   const [picked, setPicked] = useState<string[]>([]); // 일정에 담을 도시
+  const [sp] = useSearchParams();
+  useEffect(() => { if (sp.get('view') !== 'cities') return; const t = setTimeout(() => document.getElementById('cities')?.scrollIntoView({ block: 'start' }), 120); return () => clearTimeout(t); }, [sp]);
   const togglePick = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-16 flex flex-col gap-10 lg:gap-14">
-      <div className="flex flex-col gap-3"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">Sabai Solow 추천 코스 <span className="text-primary">8선</span></h1><p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-slate">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요. 숙소비는 임시 데이터 기준 어림값이에요.</p></div>
-      <h2 className="sr-only">추천 코스 8선</h2>
-      <div className="grid lg:grid-cols-12 gap-4 lg:gap-5">
-        {order.slice(0, 2).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 0} />)}
-        {order.slice(2, 4).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 1} />)}
-        {order.slice(4).map((c) => <TextCourse key={c.id} c={c} />)}
-      </div>
+      <div className="flex flex-col gap-3"><span className="self-start px-3 py-1 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold">Slow Route Collection</span><h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">Sabai Solow 추천 코스 <span className="text-primary">8선</span></h1><p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-slate">혼자라서 더 깊어지는 소도시의 온도. 체력 부담 없는 동선으로 이은 여덟 가지 느린 여정이에요. 외교부 여행경보 지역은 모두 뺐고, 숙박비는 샘플 숙소 기준 어림값이에요.</p></div>
+      {ZONES.map((z, zi) => { const list = z.ids.split('').map((id) => COURSES.find((c) => c.id === id)!); return (
+        <section key={z.key} aria-labelledby={`zone-${z.key}`} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5"><span className="kicker">Zone 0{zi + 1}</span><h2 id={`zone-${z.key}`} className="m-0 text-[26px] lg:text-[32px] font-extrabold tracking-[-0.02em]">{z.l} <span className="text-[16px] lg:text-[18px] font-semibold text-slate">· {z.d}</span></h2></div>
+          <div className="grid lg:grid-cols-12 gap-4 lg:gap-5">
+            {list.map((c, k) => <BigCourse key={c.id} c={c} wide={list.length === 2 ? k === 0 : k % 2 === 0} />)}
+            {list.length % 2 === 1 && <PickCitiesCard className="lg:col-span-5" />}
+          </div>
+        </section>); })}
       <section aria-labelledby="cities" className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">추천 소도시 20</h2><p className="m-0 text-[16px] text-slate">가고 싶은 도시를 담으면, 그 도시들로 이어지는 일정을 바로 짤 수 있어요.</p></div>
+        <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em] scroll-mt-24">가고 싶은 도시 고르기 · 소도시 20</h2><p className="m-0 text-[16px] text-slate">가고 싶은 도시를 담으면, 그 도시들로 이어지는 일정을 바로 짤 수 있어요.</p></div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{CITIES.filter((c) => c.id !== 'bangkok').map((c) => (
           <article key={c.id} className="lift card rounded-3xl overflow-hidden flex flex-col"><div className="zoom aspect-[3/2] overflow-hidden"><Photo k={c.photo} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" /></div>
             <div className="p-4 lg:p-5 flex flex-col gap-2 flex-1"><div className="flex justify-between items-center gap-2"><h3 className="m-0 text-[19px] font-bold">{c.name}</h3><span className="px-2.5 py-1 rounded-full bg-mango-t text-mango-d text-[13px] font-bold inline-flex items-center gap-1 whitespace-nowrap"><Icon name="star" size={13} />혼행 {c.solo}.0</span></div>

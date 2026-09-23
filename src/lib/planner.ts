@@ -113,7 +113,7 @@ export const maxCities = (days: number) => Math.max(1, days - 1);
 
 /**
  * 직접 고른 도시로 체류 순서·박수를 정해요.
- * 순서: 방콕에서 가까운 곳부터, 길이 이어지는(직통·허브 경유) 도시를 먼저 고르는 가까운-이웃 방식.
+ * 순서: 가까운 도시부터 잇고(길이 이어지는 곳 우선), 2-opt로 출발지까지 돌아오는 전체 거리를 줄여요.
  * 박수: 전체 박수를 고르게 나누고, 남는 박은 앞쪽(보통 큰 도시)에 더해요.
  */
 export function customStops(cities: string[], i: PlanInputs, start = 'bangkok'): CourseStop[] {
@@ -123,6 +123,16 @@ export function customStops(cities: string[], i: PlanInputs, start = 'bangkok'):
   while (left.length) {
     left.sort((a, b) => (reachable(cur, a) ? 0 : 5000) + km(cur, a) - ((reachable(cur, b) ? 0 : 5000) + km(cur, b)));
     cur = left.shift()!; order.push(cur);
+  }
+  // 2-opt: 구간을 뒤집어 출발지로 돌아오는 전체 거리가 줄면 바꿔요(돌아가는 순서 방지)
+  const leg = (a: string, b: string) => km(a, b) + (reachable(a, b) ? 0 : 5000);
+  const loop = (o: string[]) => [start, ...o, start].reduce((d, c, k, arr) => (k ? d + leg(arr[k - 1], c) : 0), 0);
+  for (let improved = true, guard = 0; improved && guard < 50; guard++) {
+    improved = false;
+    for (let x = 0; x < order.length - 1; x++) for (let y = x + 1; y < order.length; y++) {
+      const cand = [...order.slice(0, x), ...order.slice(x, y + 1).reverse(), ...order.slice(y + 1)];
+      if (loop(cand) + 0.5 < loop(order)) { order.splice(0, order.length, ...cand); improved = true; }
+    }
   }
   const total = Math.max(order.length, i.days - 1);
   const base = Math.floor(total / order.length); let extra = total - base * order.length;

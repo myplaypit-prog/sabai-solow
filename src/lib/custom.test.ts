@@ -27,3 +27,12 @@ describe('직접 고른 도시로 일정', () => {
     expect(gaps).toEqual([]);
   });
 });
+
+describe('도시 순서', () => {
+  it('북부 도시를 섞어 골라도 한 방향으로 도는 순서가 된다', () => {
+    const o = customStops(['pai', 'nan', 'chiangrai', 'lampang', 'chiangmai'], { ...base, days: 11 }).map((s) => s.city);
+    // 람빵(방콕에서 가장 가까운 북부)으로 들어가거나 나오고, 치앙마이·빠이는 붙어 있어야 해요
+    expect([o[0], o[o.length - 1]]).toContain('lampang');
+    expect(Math.abs(o.indexOf('chiangmai') - o.indexOf('pai'))).toBe(1);
+  });
+});

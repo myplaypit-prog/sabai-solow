@@ -6,7 +6,7 @@ import { cityById } from '../data/cities';
 import { TOURS } from '../data/tours';
 import { Badge, Btn, Photo } from '../components/ui';
 import { Icon } from '../components/Icon';
-import { BigCourse, TextCourse } from '../components/CourseCards';
+import { BigCourse, TextCourse, PickCitiesCard, ZONES } from '../components/CourseCards';
 import { monthTip } from '../components/Layout';
 import { todayISO, monthOf, diffDays, fmtMD } from '../lib/dates';
 import { DEFAULT_INPUTS, rankCourses, type Intensity } from '../lib/planner';
@@ -59,6 +59,7 @@ function QuickMatch() {
       <div aria-live="polite" className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 rounded-2xl bg-saffron-t text-[15px]">
         <span className="text-primary"><Icon name="star" size={18} /></span><b className="font-bold">추천: {pick.id} · {pick.name}</b><span className="text-slate">{pick.route}</span>
       </div>
+      <Link to="/courses?view=cities" className="min-h-11 -my-1 self-center inline-flex items-center gap-1.5 text-[15px] font-bold text-primary"><Icon name="pin" size={16} />가고 싶은 도시가 있다면 직접 골라 보세요</Link>
       <Link to={`/plan?${qs}`} className="btn bg-night text-on-night hover:bg-night/90 w-full">이 조건으로 일정 만들기 <Icon name="arrow" size={18} sw={2.2} /></Link>
     </section>
   );
@@ -72,23 +73,35 @@ const PILLARS = [
   { n: '04', i: 'phone', tone: 'bg-saffron-t text-primary', kt: 'text-primary', t: '1초 태국어 카드', d: '기사님께 화면만 보여 주면 되는 큰 글씨 태국어 목적지 카드와 관광경찰 1155·대사관 비상 연락처를 바로 열 수 있어요.', sl: '오프라인 사용', sv: '데이터 없이 가능', sc: 'text-marine' },
 ];
 
-const REGION_TABS: { l: string; r: Region[] | null }[] = [{ l: '전체 보기', r: null }, { l: '북부 산간', r: ['북부'] }, { l: '이산 메콩강', r: ['동북부'] }, { l: '남부 정글·섬', r: ['안다만', '걸프', '동부'] }];
+const TABS = [{ l: '전체 보기', ids: 'ECABDFGH' }, ...ZONES.map((z) => ({ l: z.l, ids: z.ids as string }))];
+
+function PickCitiesBar() {
+  return (
+    <div className="card rounded-3xl p-5 lg:px-7 bg-saffron-t flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+      <span className="w-11 h-11 rounded-2xl bg-card text-primary grid place-items-center shrink-0"><Icon name="pin" size={22} /></span>
+      <span className="flex-1 flex flex-col gap-0.5"><b className="text-[17px]">가고 싶은 도시가 따로 있나요?</b><span className="text-[15px] text-slate">20개 소도시에서 마음 가는 곳을 담으면, 가까운 순서로 이어 나만의 루트를 짜 드려요.</span></span>
+      <Link to="/courses?view=cities" className="btn btn-primary !min-h-12 self-start sm:self-auto"><Icon name="plus" size={18} sw={2.4} />도시 직접 고르기</Link>
+    </div>
+  );
+}
 
 function Courses() {
   const [tab, setTab] = useState(0);
-  const r = REGION_TABS[tab].r;
-  const list = r ? COURSES.filter((c) => c.regions.some((x) => r.includes(x))) : [...COURSES].sort((a, b) => 'ECABDFGH'.indexOf(a.id) - 'ECABDFGH'.indexOf(b.id));
+  const ids = TABS[tab].ids;
+  const list = [...COURSES].filter((c) => ids.includes(c.id)).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
   const big = list.slice(0, 2), mid = list.slice(2, 4), rest = list.slice(4);
   return (
     <section id="courses" aria-labelledby="courses-h" className="wrap gutter pt-14 lg:pt-20 scroll-mt-24">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 mb-6 lg:mb-8">
-        <div className="flex flex-col gap-2"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h2 id="courses-h" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">Sabai Solow 추천 코스 8선</h2><p className="m-0 text-[16px] text-slate">혼자서도 환승이 쉽고, 여행경보 지역을 뺀 동선이에요.</p></div>
-        <div role="tablist" aria-label="지역" className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">{REGION_TABS.map((t, k) => <button key={t.l} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className="chip whitespace-nowrap">{t.l}{t.r && ` (${COURSES.filter((c) => c.regions.some((x) => t.r!.includes(x))).length})`}</button>)}</div>
+        <div className="flex flex-col gap-2"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h2 id="courses-h" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">Sabai Solow 추천 코스 8선</h2><p className="m-0 text-[16px] text-slate">혼자라서 더 깊어지는 소도시의 온도. 무리 없는 이동으로 이은 느린 여정이에요.</p></div>
+        <div role="tablist" aria-label="지역" className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">{TABS.map((t, k) => <button key={t.l} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className="chip whitespace-nowrap">{t.l}{k > 0 && ` (${t.ids.length})`}</button>)}</div>
       </div>
       <div className="grid lg:grid-cols-12 gap-4 lg:gap-5">
         {big.map((c, k) => <BigCourse key={c.id} c={c} wide={k === 0} />)}
         {mid.map((c) => <TextCourse key={c.id} c={c} />)}
+        {mid.length < 2 && <PickCitiesCard className="lg:col-span-6" />}
       </div>
+      {mid.length >= 2 && <div className="mt-4 lg:mt-5"><PickCitiesBar /></div>}
       {rest.length > 0 && (
         <div className="mt-4 lg:mt-5 card rounded-3xl p-5 lg:px-7 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-6">
           <span className="flex items-center gap-2 font-bold"><span className="text-primary"><Icon name="compass" size={20} /></span>다른 코스도 살펴보세요</span>

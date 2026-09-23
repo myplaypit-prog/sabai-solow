@@ -14,6 +14,8 @@ export interface CourseStop { city: string; nights: number; }
 export interface Course {
   id: string; name: string; days: number; stops: CourseStop[]; start: string; end: string; route: string; transport: string;
   interests: Interest[]; regions: Region[]; photo: string;
+  /** 카드용 감성 카피: tagline(영문 한 줄) · title(제목) · copy(2문장) · area(사진 위 위치) · mood(분위기 태그) · feats(특징 2개: [아이콘, 글]) */
+  tagline: string; title: string; copy: string; area: string; mood: string; feats: [string, string][];
 }
 export type TourType = 'elephant' | 'cooking' | 'zipline' | 'trekking';
 export interface Tour {
