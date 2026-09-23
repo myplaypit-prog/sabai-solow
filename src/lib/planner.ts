@@ -1,4 +1,4 @@
-import type { Course, Interest, TourType, TransportOption } from '../data/types';
+import type { Course, CourseStop, Interest, TourType, TransportOption } from '../data/types';
 import { COURSES, courseById } from '../data/courses';
 import { cityById } from '../data/cities';
 import { findLeg } from '../data/legs';
@@ -24,7 +24,7 @@ export interface DayBadge { kind: BadgeKind; text: string; message?: string; }
 export interface PlannedLeg { from: string; to: string; option: TransportOption; alternatives: TransportOption[]; overLimit: boolean; limit: number; }
 export interface Slot { label: string; text: string; }
 export interface TripDay { n: number; date?: string; city: string; legs: PlannedLeg[]; slots: Slot[]; badges: DayBadge[]; tour?: TourType; tourCaution?: string; stay: boolean; departLegs?: PlannedLeg[]; }
-export interface Trip { id: string; userId: string; createdAt: string; name: string; courseId: string; inputs: PlanInputs; days: TripDay[]; month: number; totalHours: number; nights: number; cityIds: string[]; warnings: string[]; offline?: boolean; notes?: Record<string, string>; }
+export interface Trip { id: string; userId: string; createdAt: string; name: string; courseId: string; inputs: PlanInputs; days: TripDay[]; month: number; totalHours: number; nights: number; cityIds: string[]; warnings: string[]; offline?: boolean; notes?: Record<string, string>; stops: CourseStop[]; }
 
 export const RULES = { maxHours: 6, safeMaxHours: 5, minNights: 1, rainyMonths: [6, 7, 8, 9, 10], heatMonths: [3, 4, 5] };
 
@@ -87,11 +87,11 @@ export function fitStops(course: Course, i: PlanInputs) {
 
 const INTEREST_TOUR: Record<Interest, TourType[]> = { nature: ['trekking', 'elephant', 'zipline'], cafe: ['cooking'], temple: ['cooking'], sea: [], yoga: ['cooking'], work: [] };
 
-export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string): Trip {
+export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string, stopsOverride?: CourseStop[]): Trip {
   const course = forcedCourseId || i.courseId ? courseById((forcedCourseId || i.courseId)!) : rankCourses(i)[0].c;
   const m = tripMonth(i);
   const rainy = RULES.rainyMonths.includes(m), heat = RULES.heatMonths.includes(m);
-  const stops = fitStops(course, i);
+  const stops = stopsOverride ? stopsOverride.map((x) => ({ ...x })) : fitStops(course, i);
   const warnings: string[] = [];
   const days: TripDay[] = [];
   let prev = course.start, pending: PlannedLeg[] = [], n = 1;
@@ -154,10 +154,11 @@ export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string)
   const allLegs = days.flatMap((d) => [...d.legs, ...(d.departLegs ?? [])]);
   if (rainy && days.some((d) => cityById(d.city).mountainRoad)) warnings.push('6~10월 산간 도로가 포함돼 예비일 1일을 권해요. 비 오는 날엔 실내 일정으로 바꿔 드려요.');
   if (allLegs.some((l) => l.overLimit)) warnings.push(`하루 이동 ${i.safe ? RULES.safeMaxHours : RULES.maxHours}시간을 넘는 구간이 있어요. 중간 도시 1박을 더하거나 그대로 진행할 수 있어요.`);
+  { let run = 0; for (const d of days) { run = d.legs.length || d.departLegs?.length ? run + 1 : 0; if (run > 2) { warnings.push('이동하는 날이 3일 넘게 이어져요. 한 도시에 1박을 더하면 덜 지쳐요.'); break; } } }
   if (i.safe) warnings.push('안심 일정: 도시 도착은 21시 전, 야간버스 대신 침대칸, 하루 이동 5시간 이하를 우선해요.');
   const cityIds = [...new Set(days.map((d) => d.city))];
   return {
     id: Math.random().toString(36).slice(2, 10), userId, createdAt: new Date().toISOString(), name: course.name, courseId: course.id, inputs: i, days, month: m,
-    totalHours: Math.round(allLegs.reduce((a, l) => a + l.option.hours, 0)), nights: days.length - 1, cityIds, warnings, notes: {},
+    totalHours: Math.round(allLegs.reduce((a, l) => a + l.option.hours, 0)), nights: days.length - 1, cityIds, warnings, notes: {}, stops,
   };
 }
