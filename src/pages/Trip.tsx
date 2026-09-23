@@ -9,7 +9,7 @@ import { STAYS, BAND_LABEL, mapsSearch, stayById, stayName, cheapestStay } from 
 import { regionSeason } from '../data/seasons';
 import { prepareOffline } from '../lib/offline';
 import { decodeShare, shareUrl } from '../lib/share';
-import { estimateCost, COST_LABELS } from '../lib/cost';
+import { estimateCost, COST_LABELS, COST_RULES } from '../lib/cost';
 import { courseById } from '../data/courses';
 import { BOOKING } from '../data/legs';
 import { fmtDot, weekday, fmtMD, addDays } from '../lib/dates';
@@ -161,6 +161,7 @@ export default function Trip() {
   const [legKey, setLegKey] = useState<string>();
   const [mapFocus, setMapFocus] = useState<string>();
   const [periodOpen, setPeriodOpen] = useState(false);
+  const [costOpen, setCostOpen] = useState(false);
   const tab = (TABS.includes(sp.get('tab') as Tab) ? sp.get('tab') : '일자별') as Tab;
   const setTab = (t: Tab) => setSp({ ...(sd ? { d: sd } : {}), ...(t === '일자별' ? {} : { tab: t }) }, { replace: true });
 
@@ -232,9 +233,29 @@ export default function Trip() {
             <button key={a.i} type="button" onClick={a.f} className={`min-h-16 lg:min-h-[52px] rounded-2xl lg:rounded-full lg:px-5 flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 text-xs lg:text-base font-extrabold line ${k === 0 ? 'bg-lagoon text-on-lagoon shadow-none' : 'bg-paper'}`}><Icon name={a.i} size={20} /><span className="lg:hidden">{a.s}</span><span className="hidden lg:inline">{a.t}</span></button>))}</div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 rounded-[22px] card overflow-hidden">
-          {[['기간', first.date ? `${fmtDot(first.date)} – ${fmtDot(last.date!)}` : `${trip.month}월 · ${trip.days.length}일`, `${trip.nights}박 ${trip.days.length}일`], ['도시', `${cities.length}곳`, cities.map(cname).join(' → ')], ['총 이동', `약 ${trip.totalHours}시간`, trip.days.some((d) => d.legs.some((l) => l.option.overnight)) ? '야간열차 포함' : '낮 이동'], ['예상 총경비 · 1인', `약 ${cost.total}만원`, COST_LABELS.map(([k, l]) => `${l} ${cost[k]}`).join(' · ') + ' (만원 · 임시)']].map(([a, b, c], i) => (
+          {[['기간', first.date ? `${fmtDot(first.date)} – ${fmtDot(last.date!)}` : `${trip.month}월 · ${trip.days.length}일`, `${trip.nights}박 ${trip.days.length}일`], ['도시', `${cities.length}곳`, cities.map(cname).join(' → ')], ['총 이동', `약 ${trip.totalHours}시간`, trip.days.some((d) => d.legs.some((l) => l.option.overnight)) ? '야간열차 포함' : '낮 이동'], ['예상 총경비 · 1인', `약 ${cost.total}만원`, '임시 어림 · 아래에서 항목별로 볼 수 있어요']].map(([a, b, c], i) => (
             <div key={a} className={`flex flex-col gap-1 p-3.5 lg:px-[22px] lg:py-[18px] ${i % 2 ? 'border-l-[1.5px] rule' : ''} ${i === 2 ? 'lg:border-l-[1.5px]' : ''} ${i > 1 ? 'border-t-[1.5px] lg:border-t-0 rule' : ''}`}>
               <span className="text-[13px] font-extrabold tracking-[.06em] text-muted">{a}</span><span className="font-bold text-[26px] lg:text-4xl leading-none">{b}</span><span className={`text-sm text-muted ${i === 3 ? 'leading-snug' : 'truncate'}`}>{c}</span></div>))}
+        </div>
+        <div className="card rounded-[22px] no-print">
+          <button type="button" aria-expanded={costOpen} onClick={() => setCostOpen(!costOpen)} className="w-full min-h-[52px] px-[18px] py-3 flex items-center gap-2.5 flex-wrap text-left text-[15px]">
+            <span className="text-primary"><Icon name="bag" size={18} /></span><b className="font-extrabold">예상 총경비 약 {cost.total}만원</b>
+            <span className="text-slate">{COST_LABELS.map(([k, l]) => `${l} ${cost[k]}`).join(' · ')}</span>
+            <span className="ml-auto inline-flex items-center gap-1 font-bold text-primary">{costOpen ? '접기' : '자세히'}<span className={costOpen ? 'rotate-180' : ''}><Icon name="chevd" size={16} /></span></span>
+          </button>
+          {costOpen && (
+            <div className="px-[18px] pb-5 grid md:grid-cols-2 gap-x-8 gap-y-5">
+              {COST_LABELS.map(([k, l]) => (
+                <section key={k} aria-label={`${l} 비용`} className="flex flex-col gap-2">
+                  <h3 className="m-0 flex justify-between text-[15px] font-extrabold border-b rule pb-1.5"><span>{l}</span><span className="text-primary">약 {cost[k]}만원</span></h3>
+                  {cost.detail[k].length ? <ul className="m-0 p-0 list-none flex flex-col gap-1.5">{cost.detail[k].map((x, n) => (
+                    <li key={n} className="flex justify-between gap-3 text-[14px]"><span className="flex flex-col min-w-0"><span className="font-semibold">{x.label}</span>{x.sub && <span className="text-[13px] text-slate">{x.sub}</span>}</span><span className="font-bold whitespace-nowrap">{(x.krw / 10000).toFixed(1)}만원</span></li>
+                  ))}</ul> : <p className="m-0 text-[14px] text-slate">{k === 'tours' ? '담은 투어가 없어요. 투어 탭에서 담으면 여기에 더해져요.' : '없음'}</p>}
+                </section>
+              ))}
+              <p className="m-0 md:col-span-2 text-[13px] text-slate">모두 임시 어림값이에요(환율 1바트 ≈ 42원, 하루 식비·현지 {COST_RULES.dailyThb.toLocaleString()}바트). 실제 요금은 예약 사이트에서 확인해 주세요.</p>
+            </div>
+          )}
         </div>
         <div className="rounded-[18px] bg-butter text-fixedink">
           <button type="button" aria-expanded={periodOpen} onClick={() => setPeriodOpen(!periodOpen)} className="w-full min-h-[52px] px-[18px] py-3 flex items-center gap-2.5 flex-wrap text-left text-[15px] font-bold"><Icon name="info" size={18} /><span className="font-extrabold">이 기간의 여행 정보</span><span className="hidden lg:inline">{trip.warnings[0]}</span><span className={`ml-auto ${periodOpen ? 'rotate-180' : ''}`}><Icon name="chevd" size={18} /></span></button>
