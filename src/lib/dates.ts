@@ -1,0 +1,11 @@
+const WK = ['일', '월', '화', '수', '목', '금', '토'];
+export const parseISO = (s: string) => { const [y, m, d] = s.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); };
+export const toISO = (d: Date) => d.toISOString().slice(0, 10);
+export const addDays = (s: string, n: number) => { const d = parseISO(s); d.setUTCDate(d.getUTCDate() + n); return toISO(d); };
+export const diffDays = (a: string, b: string) => Math.round((parseISO(b).getTime() - parseISO(a).getTime()) / 86400000);
+export const weekday = (s: string) => WK[parseISO(s).getUTCDay()];
+export const monthOf = (s: string) => parseISO(s).getUTCMonth() + 1;
+export const fmtMD = (s: string) => `${monthOf(s)}월 ${parseISO(s).getUTCDate()}일`;
+export const fmtDot = (s: string) => `${String(monthOf(s)).padStart(2, '0')}.${String(parseISO(s).getUTCDate()).padStart(2, '0')}`;
+export const todayISO = () => { const n = new Date(); return toISO(new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()))); };
+export const inRange = (d: string, from: string, to: string) => d >= from && d <= to;
