@@ -5,6 +5,7 @@ import { COURSES } from '../data/courses';
 import { CITIES, cityById } from '../data/cities';
 import { tourById } from '../data/tours';
 import { ALL_CREDITS } from '../data/photos';
+import { stayName } from '../data/stays';
 import { listTrips, deleteTrip, getTrip } from '../lib/trips';
 import { deleteAll } from '../lib/auth';
 import { storageMode } from '../lib/storage';
@@ -142,7 +143,7 @@ export function PrintView() {
           {d.legs.map((l) => <p key={l.from} className="m-0">이동: {cityById(l.from).name} → {cityById(l.to).name} · {l.option.label} {l.option.hoursText}</p>)}
           <ul className="m-0 pl-5">{d.slots.map((s, i) => <li key={i}><b>{s.label}</b> {s.text}</li>)}</ul>
           {d.tour && <div><b>투어: {tourById(d.tour).name}</b><TourBlocks id={d.tour as TourType} /></div>}
-          {d.stay && <p className="m-0">숙소: {t.notes?.[`stay:${d.city}`] ?? '[숙소명]'} · 예약 번호: {t.notes?.[`res:${d.n}`] ?? '________'}</p>}
+          {d.stay && <p className="m-0">숙소: {stayName(t.notes?.[`stay:${d.city}`]) ?? '아직 고르지 않았어요'} · 예약 번호: {t.notes?.[`res:${d.n}`] ?? '________'}</p>}
         </article>))}
       <article className="max-w-[800px] mx-auto px-6 py-8 flex flex-col gap-3 border-t border-ink/20"><h2 className="m-0 text-2xl font-extrabold">비상 연락처 · 태국어 목적지 카드</h2><p className="m-0">관광경찰 1155 · 주태국 대한민국 대사관 [연락처 확인 필요]</p>
         <div className="grid grid-cols-2 gap-3">{t.cityIds.filter((c) => c !== 'bangkok').map((c) => <DestCard key={c} city={c} />)}</div></article>

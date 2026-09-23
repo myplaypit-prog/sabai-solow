@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { planTrip, DEFAULT_INPUTS, rankCourses, RULES } from './planner';
 import { COURSES } from '../data/courses';
 import { periodInfo } from './period';
+import { STAYS, cheapestStay } from '../data/stays';
 
 describe('규칙 엔진', () => {
   it('A코스 10일: 도시 순서·날짜 배지·안심 경고', () => {
@@ -36,5 +37,26 @@ describe('규칙 엔진', () => {
     expect(p.events.map((e) => e.id)).toContain('nanboat');
     expect(p.rules).toContain('산간 도로가 있으면 예비일 1일');
     expect(RULES.safeMaxHours).toBe(5);
+  });
+  it('편집으로 순서를 바꿔도 교통편이 끊기지 않아요(거점 자동 환승)', () => {
+    const noGap = (t: ReturnType<typeof planTrip>) => t.days.flatMap((d) => [...d.legs, ...(d.departLegs ?? [])]).every((l) => l.option.hours > 0);
+    // D코스: 칸차나부리 ↔ 수코타이는 직통이 없어 방콕을 거쳐야 해요.
+    const d = planTrip(DEFAULT_INPUTS, 'u', 'D', [{ city: 'sukhothai', nights: 2 }, { city: 'kanchanaburi', nights: 2 }, { city: 'chiangmai', nights: 2 }]);
+    expect(noGap(d)).toBe(true);
+    expect(d.stops.map((s) => s.city)).toEqual(['sukhothai', 'bangkok', 'kanchanaburi', 'bangkok', 'chiangmai']);
+    // 모든 코스를 거꾸로 편집해도 빈 구간이 없어요.
+    for (const c of COURSES) {
+      const rev = c.stops.filter((s) => s.nights > 0).reverse();
+      expect(noGap(planTrip(DEFAULT_INPUTS, 'u', c.id, rev))).toBe(true);
+    }
+  });
+  it('숙소 임시 데이터: 평점 4.5 이상 · 1박 10만원 이하 · 샘플 표시', () => {
+    expect(STAYS.length).toBeGreaterThan(0);
+    for (const s of STAYS) {
+      expect(Number(s.rating)).toBeGreaterThanOrEqual(4.5);
+      expect(s.price).toBeLessThanOrEqual(100000);
+      expect(s.sample).toBe(true);
+    }
+    expect(cheapestStay('chiangmai', 3)?.band).toBe(1);
   });
 });

@@ -1,7 +1,7 @@
 import type { Course, CourseStop, Interest, TourType, TransportOption } from '../data/types';
 import { COURSES, courseById } from '../data/courses';
 import { cityById } from '../data/cities';
-import { findLeg } from '../data/legs';
+import { findLeg, hasLeg, HUBS } from '../data/legs';
 import { EVENTS } from '../data/events';
 import { tourById } from '../data/tours';
 import { regionSeason } from '../data/seasons';
@@ -85,13 +85,31 @@ export function fitStops(course: Course, i: PlanInputs) {
   return stops;
 }
 
+/** 직통 구간이 없으면 교통 거점(0박 환승)을 사이에 넣어요. 편집으로 도시 순서가 바뀌어도 교통편이 끊기지 않게 합니다. */
+export function hubBetween(a: string, b: string): string | undefined {
+  if (a === b || hasLeg(a, b)) return undefined;
+  return HUBS.find((h) => h !== a && h !== b && hasLeg(a, h) && hasLeg(h, b));
+}
+export function bridgeStops(start: string, stops: CourseStop[]): CourseStop[] {
+  const out: CourseStop[] = [];
+  let prev = start;
+  for (const s of stops) {
+    if (s.nights === 0 && s.city === prev) continue;
+    const hub = hubBetween(prev, s.city);
+    if (hub && !(out.length && out[out.length - 1].city === hub)) out.push({ city: hub, nights: 0 });
+    out.push({ ...s });
+    prev = s.city;
+  }
+  return out;
+}
+
 const INTEREST_TOUR: Record<Interest, TourType[]> = { nature: ['trekking', 'elephant', 'zipline'], cafe: ['cooking'], temple: ['cooking'], sea: [], yoga: ['cooking'], work: [] };
 
 export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string, stopsOverride?: CourseStop[]): Trip {
   const course = forcedCourseId || i.courseId ? courseById((forcedCourseId || i.courseId)!) : rankCourses(i)[0].c;
   const m = tripMonth(i);
   const rainy = RULES.rainyMonths.includes(m), heat = RULES.heatMonths.includes(m);
-  const stops = stopsOverride ? stopsOverride.map((x) => ({ ...x })) : fitStops(course, i);
+  const stops = bridgeStops(course.start, stopsOverride ? stopsOverride.map((x) => ({ ...x })) : fitStops(course, i));
   const warnings: string[] = [];
   const days: TripDay[] = [];
   let prev = course.start, pending: PlannedLeg[] = [], n = 1;
@@ -135,7 +153,10 @@ export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string,
   }
   // 마지막 날: 출발 도시에서 귀국 구간
   const lastCity = prev;
-  const depart: PlannedLeg[] = course.end !== lastCity ? [chooseOption(lastCity, course.end, i, true)] : [];
+  const departHub = hubBetween(lastCity, course.end);
+  const depart: PlannedLeg[] = course.end === lastCity ? [] : departHub
+    ? [chooseOption(lastCity, departHub, i, true), chooseOption(departHub, course.end, i, true)]
+    : [chooseOption(lastCity, course.end, i, true)];
   days.push({ n, date: dateOf(n), city: lastCity, legs: [], slots: [{ label: '오전', text: '체크아웃' }], badges: [], stay: false, departLegs: depart });
 
   // 규칙 10: 날짜 배지(금주일·축제·공휴일)

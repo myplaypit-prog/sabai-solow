@@ -21,10 +21,12 @@ export function TourBlocks({ id, rainy }: { id: TourType; rainy?: boolean }) {
   </>);
 }
 
-export function TourSheet({ id, onClose, onAdd, rainy, context }: { id: TourType; onClose: () => void; onAdd?: () => void; rainy?: boolean; context?: string }) {
+export function TourSheet({ id, onClose, onAdd, rainy, context, added = false }: { id: TourType; onClose: () => void; onAdd?: () => void; rainy?: boolean; context?: string; added?: boolean }) {
   const t = tourById(id); const { online } = useApp();
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => { const prev = document.activeElement as HTMLElement | null; ref.current?.focus(); const k = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }; document.addEventListener('keydown', k); document.body.style.overflow = 'hidden'; return () => { document.removeEventListener('keydown', k); document.body.style.overflow = ''; prev?.focus(); }; }, [onClose]);
+  // onClose는 부모가 렌더할 때마다 새로 만들어져요. ref로 들고 있어야 포커스·스크롤 잠금이 한 번만 걸려요.
+  const closeRef = useRef(onClose); closeRef.current = onClose;
+  useEffect(() => { const prev = document.activeElement as HTMLElement | null; ref.current?.focus(); const k = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current(); }; document.addEventListener('keydown', k); document.body.style.overflow = 'hidden'; return () => { document.removeEventListener('keydown', k); document.body.style.overflow = ''; prev?.focus(); }; }, []);
   return (
     <div className="fixed inset-0 z-[70] flex items-end lg:items-start justify-center lg:pt-16 overflow-y-auto" role="presentation">
       <button type="button" aria-label="닫기" onClick={onClose} className="fixed inset-0 bg-[rgba(42,27,20,.62)] cursor-default" />
@@ -41,7 +43,9 @@ export function TourSheet({ id, onClose, onAdd, rainy, context }: { id: TourType
             <div className="flex flex-col gap-2.5"><Kicker>Local tour{context ? ` · ${context}` : ''}</Kicker>
               <h2 id="tour-title" className="m-0 text-[40px] lg:text-[52px] leading-[1.05] font-extrabold tracking-[-0.05em]">{t.name}</h2>
               <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[15px] lg:text-base font-semibold"><span className="flex gap-1.5 items-center"><Icon name="pin" size={18} />{t.cities.map((c) => cityById(c).name).join(', ')}</span><span className="flex gap-1.5 items-center"><Icon name="clock" size={18} />{t.duration}</span><span className="flex gap-1.5 items-center"><Icon name="bag" size={18} />{t.priceBand}</span></div></div>
-            <div className="flex gap-2.5">{onAdd && <button type="button" onClick={onAdd} className="btn btn-line h-14"><Icon name="plus" size={18} sw={2.4} />일정에 담기</button>}
+            <div className="flex gap-2.5">{onAdd && (added
+                ? <span role="status" className="btn btn-line h-14 opacity-70"><Icon name="check" size={18} sw={2.4} />일정에 담았어요</span>
+                : <button type="button" onClick={onAdd} className="btn btn-line h-14"><Icon name="plus" size={18} sw={2.4} />일정에 담기</button>)}
               {online ? <ExtLink href={t.links[0].url} className="btn btn-lagoon h-14 flex-1 lg:flex-none">예약 사이트 열기 <Icon name="ext" size={18} /></ExtLink> : <span aria-disabled="true" className="btn btn-lagoon h-14 opacity-45">오프라인이라 링크를 꺼 뒀어요</span>}</div>
           </div>
           <TourBlocks id={id} rainy={rainy} />

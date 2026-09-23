@@ -12,7 +12,7 @@ export const EVENTS: CalendarEvent[] = [
   { id: 'songkran', type: 'festival', title: '송크란(태국 새해)', dateText: '4월 13~15일', from: '2026-04-13', to: '2026-04-15', cities: 'all', message: '전국 물축제(치앙마이 최대)', impact: '교통 매진, 가격 급등, 방수팩 준비' },
   { id: 'phitakhon', type: 'festival', title: '피타콘 가면 축제', dateText: '6~7월', months: [6, 7], cities: ['loei', 'chiangkhan'], message: '러이 단사이', impact: '숙소 부족' },
   { id: 'nanboat', type: 'festival', title: '난 전통 보트 레이스', dateText: '9~10월', months: [9, 10], cities: ['nan'], message: '연중 가장 붐비는 때', impact: '숙소 예약 필수', photo: 'boatrace' },
-  { id: 'veg', type: 'festival', title: '채식 축제', dateText: '10월 · 음력 9월 초 · 날짜 [빈칸]', months: [10], cities: ['trang'], message: '식당 다수가 채식 메뉴만 판매', impact: '정확한 날짜 [빈칸]', photo: 'thaifood' },
+  { id: 'veg', type: 'festival', title: '채식 축제', dateText: '10월 중순(임시 · 음력 9월 초)', months: [10], cities: ['trang'], message: '식당 다수가 채식 메뉴만 판매', impact: '날짜는 매년 바뀌어요(임시값)', photo: 'thaifood' },
   { id: 'loykrathong', type: 'festival', title: '로이끄라통 · 이펭', dateText: '11월 23~25일', from: '2026-11-23', to: '2026-11-25', cities: ['chiangmai', 'sukhothai'], message: '구시가지 숙소 2~3배', impact: '4~6개월 전 예약 권장', photo: 'lantern' },
   { id: 'kwai', type: 'festival', title: '콰이강의 다리 주간', dateText: '11월 말~12월 초', months: [11, 12], cities: ['kanchanaburi'], message: '불꽃놀이·조명쇼', impact: '주말 혼잡' },
   { id: 'crflower', type: 'festival', title: '치앙라이 꽃 축제', dateText: '12월~2월', months: [12, 1, 2], cities: ['chiangrai'], message: '시내 공원 행사', impact: '영향 적음' },

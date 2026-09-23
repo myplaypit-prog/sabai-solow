@@ -44,7 +44,8 @@ export default function Plan() {
   const { user, ready, toast } = useApp();
   const nav = useNavigate();
   const [sp] = useSearchParams();
-  const preset = sp.get('course') ?? undefined;
+  const rawPreset = sp.get('course') ?? undefined;
+  const preset = rawPreset && courseById(rawPreset) ? rawPreset : undefined; // 잘못된 ?course= 값은 무시
   const [step, setStep] = useState(0);
   const [tips, setTips] = useState(false);
   const [gen, setGen] = useState(-1);
@@ -55,7 +56,9 @@ export default function Plan() {
   useEffect(() => { if (preset) { const c = courseById(preset); if (c) set({ days: c.days, courseId: preset }); } }, [preset]);
 
   const dateDays = inp.whenMode === 'dates' && inp.start && inp.end ? diffDays(inp.start, inp.end) + 1 : null;
-  const dateErr = dateDays !== null && (dateDays < 3 || dateDays > 21) ? '여행 일수는 3~21일까지 짤 수 있어요. 날짜를 다시 골라 주세요.' : dateDays !== null && dateDays < 1 ? '귀국일이 출발일보다 빨라요.' : null;
+  const dateErr = dateDays === null ? null
+    : dateDays < 1 ? '귀국일이 출발일보다 빨라요. 날짜를 다시 골라 주세요.'
+    : dateDays < 3 || dateDays > 21 ? '여행 일수는 3~21일까지 짤 수 있어요. 날짜를 다시 골라 주세요.' : null;
   useEffect(() => { if (dateDays && dateDays >= 3 && dateDays <= 21) set({ days: dateDays }); }, [dateDays]);
   const preview = useMemo(() => (inp.courseId ? courseById(inp.courseId) : rankCourses(inp)[0].c), [inp]);
 
@@ -73,7 +76,7 @@ export default function Plan() {
 
   if (gen >= 0) return (
     <main className="wrap gutter py-20 lg:py-32 flex flex-col items-center text-center gap-8" aria-live="polite">
-      <div className="grain w-[220px] h-[160px] rounded-[28px] overflow-hidden line -rotate-3"><Photo k="songthaew" /></div>
+      <div className="grain w-[220px] h-[160px] rounded-[28px] overflow-hidden line -rotate-3"><Photo k="songthaew" eager /></div>
       <h1 className="m-0 text-[32px] lg:text-5xl font-extrabold tracking-[-0.04em]">일정을 만들고 있어요</h1>
       <ol className="m-0 p-0 list-none flex flex-col gap-3 text-lg font-bold">{GEN_STEPS.map((g, i) => <li key={g} className={`flex items-center gap-3 ${i <= gen ? '' : 'text-muted'}`}><span className={i < gen ? 'text-lagoon' : ''}><Icon name={i < gen ? 'check' : 'clock'} sw={2.4} /></span>{g}{i === gen ? '…' : ''}</li>)}</ol>
     </main>
@@ -103,7 +106,7 @@ export default function Plan() {
             <fieldset className="m-0 p-0 border-0 flex flex-col gap-3.5"><legend className="text-base font-extrabold mb-3.5">여행 시기 정하기</legend>
               <div className="flex flex-col lg:flex-row gap-2.5 lg:gap-3.5">
                 <RadioCard name="when" checked={inp.whenMode === 'dates'} onChange={() => set({ whenMode: 'dates' })} title="날짜 지정" desc="출발일과 귀국일을 알아요" icon="calendar" />
-                <RadioCard name="when" checked={inp.whenMode === 'month'} onChange={() => set({ whenMode: 'month', month: inp.month ?? new Date().getMonth() + 2 })} title="월만 지정" desc="가고 싶은 달만 정했어요" icon="sun" />
+                <RadioCard name="when" checked={inp.whenMode === 'month'} onChange={() => set({ whenMode: 'month', month: inp.month ?? (new Date().getMonth() + 1) % 12 + 1 })} title="월만 지정" desc="가고 싶은 달만 정했어요" icon="sun" />
                 <RadioCard name="when" checked={inp.whenMode === 'undecided'} onChange={() => set({ whenMode: 'undecided' })} title="아직 미정" desc="시기 팁을 보고 고를래요" icon="compass" />
               </div></fieldset>
             {inp.whenMode === 'dates' && <div className="flex flex-col gap-3">

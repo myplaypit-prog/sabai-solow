@@ -29,11 +29,14 @@ const L: Leg[] = [
   { from: 'chumphon', to: 'suratthani', options: [o('train', '기차', 3, '2~3h'), o('bus', '버스', 3, '3h')] },
   { from: 'bangkok', to: 'suratthani', options: [o('night_train', '야간열차 침대칸', 11, '9~11h', { overnight: true, ladies: true, note: '31/32호 여성 전용칸(방콕–수랏타니 구간)' }), o('flight', '국내선', 1.2, '1h10m')] },
   { from: 'suratthani', to: 'khaosok', options: [o('minivan', '미니밴', 2, '2h'), o('bus', '버스', 2.5, '2~2.5h')] },
-  { from: 'khaosok', to: 'trang', options: [o('minivan', '미니밴(수랏타니 경유)', 5, '[소요 시간 확인 필요]')] },
+  { from: 'khaosok', to: 'trang', options: [o('minivan', '미니밴(수랏타니 경유)', 5, '약 5h(임시)', { note: '소요 시간 임시값 · 운행사 확인 필요' })] },
   { from: 'bangkok', to: 'trang', options: [o('night_train', '야간열차 침대칸', 16, '15~16h', { overnight: true }), o('flight', '국내선', 1.5, '1h30m')] },
   { from: 'trang', to: 'kohlipe', options: [o('ferry', '미니밴 + 스피드보트', 3.5, '빡바라 항까지 1.5~2h + 1.5h', { seasonal: '11~5월 운항 · 5~10월 대폭 감편' })] },
 ];
 export const LEGS = L;
+export const hasLeg = (from: string, to: string) => L.some((l) => (l.from === from && l.to === to) || (l.from === to && l.to === from));
+/** 직통 구간이 없을 때 거쳐 갈 교통 거점 */
+export const HUBS = ['bangkok', 'chiangmai', 'suratthani', 'trang'];
 export function findLeg(from: string, to: string): Leg {
   const direct = L.find((l) => l.from === from && l.to === to);
   if (direct) return direct;

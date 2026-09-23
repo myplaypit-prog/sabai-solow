@@ -27,4 +27,5 @@ export interface CalendarEvent {
   cities: string[] | 'all'; message: string; impact?: string; photo?: string;
 }
 export interface SeasonTip { id: string; period: string; sub?: string; months: number[]; badge: SeasonBadge; badgeText: string; weather: string; price: string; pros: string; cons: string; quote: string; photo: string; recommend?: string[]; }
-export interface Stay { id: string; city: string; name: string; band: 1 | 2 | 3; rating: string; reviews: string; priceKrw: string; priceThb: string; site: string; checkedOn: string; distance: string; tags: string[]; photo: string; }
+/** sample: 테스트용 임시 데이터(실제 숙소 아님). 정식 데이터로 바꿀 때 false로 두고 값을 채웁니다. */
+export interface Stay { id: string; city: string; name: string; band: 1 | 2 | 3; rating: string; reviews: string; price: number; priceKrw: string; priceThb: string; site: string; checkedOn: string; distance: string; tags: string[]; photo: string; sample: boolean; }
