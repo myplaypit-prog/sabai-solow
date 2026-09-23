@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login, signup, markVerified, resetPassword, pwRule, emailRule } from '../lib/auth';
 import { useApp } from '../state';
 import { Icon } from '../components/Icon';
-import { Kicker, Logo, Photo } from '../components/ui';
+import { Kicker, Photo } from '../components/ui';
 
 function Field({ id, label, type, value, onChange, icon, hint, error, autoComplete }: { id: string; label: string; type: string; value: string; onChange: (v: string) => void; icon: string; hint?: string; error?: string; autoComplete?: string }) {
   const [show, setShow] = useState(false);
@@ -30,7 +30,6 @@ function AuthFrame({ kicker, title, sub, children }: { kicker: string; title: st
     <main className="flex-1 lg:flex lg:min-h-[900px]">
       <div className="relative h-[260px] m-2 lg:m-4 lg:mr-0 lg:h-auto lg:flex-1 rounded-[28px] lg:rounded-[40px] overflow-hidden">
         <Photo k="train" eager />
-        <div className="absolute left-3.5 top-3.5 lg:left-8 lg:top-7 z-[4] px-3.5 py-2.5 lg:px-5 lg:py-3.5 rounded-2xl lg:rounded-[20px] bg-cloud"><Logo size={22} /></div>
         <div className="absolute left-5 right-5 bottom-4 lg:left-10 lg:bottom-10 z-[4] flex flex-col gap-3.5 text-[#FFFCF5]"><span className="serif-i text-5xl lg:text-[56px] leading-[.95] [text-shadow:0_2px_24px_rgba(0,0,0,.4)]">slow &amp; solo</span><span className="hidden lg:inline self-start px-4 py-2.5 rounded-full bg-[rgba(15,22,40,.6)] font-bold">창밖으로 강이 흐르는, 혼자만의 기차 여행</span></div>
       </div>
       <div className="w-full lg:w-[600px] px-4 lg:px-[88px] py-7 lg:py-14 flex flex-col justify-center gap-6 lg:gap-8 box-border">
