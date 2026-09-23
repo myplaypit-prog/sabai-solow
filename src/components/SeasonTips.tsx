@@ -30,15 +30,15 @@ export function TipCards({ onPick }: { onPick: (month: number) => void }) {
       {order.map((t) => {
         const isNow = t.months.includes(now) && t.id !== 'gulf' && t.id !== 'haze';
         return (
-          <article key={t.id} className={`lift relative flex flex-col rounded-[28px] overflow-hidden bg-paper ${isNow ? 'shadow-[inset_0_0_0_3px_rgb(var(--ink))]' : 'line'}`}>
-            {isNow && <span className="absolute top-3.5 right-3.5 z-[5] px-3.5 py-2 rounded-full bg-chili text-fixedink text-sm font-extrabold rotate-6 shadow-[3px_3px_0_#2A1B14]">지금 {now}월</span>}
+          <article key={t.id} className={`lift relative flex flex-col rounded-[28px] overflow-hidden bg-paper ${isNow ? 'shadow-[inset_0_0_0_2px_rgb(var(--primary))]' : 'line'}`}>
+            {isNow && <span className="absolute top-3.5 right-3.5 z-[5] px-3.5 py-2 rounded-full bg-chili text-fixedink text-sm font-extrabold rotate-6 shadow-cta">지금 {now}월</span>}
             <div className="grain h-[170px] lg:h-[180px] border-b-[1.5px] rule"><Photo k={t.photo} /></div>
             <div className="p-[22px] flex flex-col gap-3 flex-1">
-              <div className="flex flex-col gap-1"><h3 className="m-0 font-serif font-normal text-[40px] leading-none">{t.period}</h3>{t.sub && <span className="text-[15px] font-extrabold">{t.sub}</span>}</div>
+              <div className="flex flex-col gap-1"><h3 className="m-0 text-[28px] font-extrabold tracking-[-0.02em] leading-tight">{t.period}</h3>{t.sub && <span className="text-[15px] font-extrabold">{t.sub}</span>}</div>
               <div><Badge kind={seasonKind(t.badge)}>{t.badgeText}</Badge></div>
               <p className="m-0 text-[15px] font-bold leading-snug">{t.weather}</p>
               <div className="flex flex-col gap-2 text-[15px] leading-normal"><span className="flex gap-2"><span className="text-lagoon"><Icon name="check" size={18} sw={2.4} /></span><span>{t.pros}</span></span><span className="flex gap-2"><span className="text-chili-d"><Icon name="alert" size={18} /></span><span>{t.cons}</span></span></div>
-              <p className="m-0 mt-1 pt-3 border-t border-ink/20 serif-i text-xl leading-snug">“{t.quote}”</p>
+              <p className="m-0 mt-1 pt-3 border-t border-hair serif-i text-xl leading-snug">“{t.quote}”</p>
               <button type="button" onClick={() => onPick(t.months.includes(now) ? now : t.months[0])} className={`btn mt-auto h-[52px] ${isNow ? 'btn-lagoon' : 'btn-line'}`}>이 시기로 계획하기 <Icon name="arrow" size={18} sw={2.4} /></button>
             </div>
           </article>

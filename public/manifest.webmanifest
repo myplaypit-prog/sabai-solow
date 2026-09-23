@@ -1,2 +1,2 @@
-{ "name": "Sabai Solow", "short_name": "Sabai Solow", "start_url": "./", "display": "standalone", "background_color": "#F7F3EA", "theme_color": "#0E6E68", "lang": "ko",
+{ "name": "Sabai Solow", "short_name": "Sabai Solow", "start_url": "./", "display": "standalone", "background_color": "#FAF7F2", "theme_color": "#1B2A4A", "lang": "ko",
   "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }] }

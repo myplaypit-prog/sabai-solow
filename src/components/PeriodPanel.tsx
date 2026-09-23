@@ -20,7 +20,7 @@ export function PeriodPanel({ start, end, month, compact = false }: { start?: st
             <h3 className="m-0 mb-1 text-base font-extrabold flex gap-2 items-center"><span className="text-lagoon"><Icon name="map" size={18} /></span>지역별 계절{p.months.length > 1 ? ` (${p.months[0]}월 기준)` : ''}</h3>
             <ul className="m-0 p-0 list-none">
               {p.regions.map((r) => (
-                <li key={r.label} className="grid grid-cols-[76px_minmax(0,1fr)] lg:grid-cols-[92px_minmax(0,1fr)] gap-3 py-3.5 border-t border-ink/20">
+                <li key={r.label} className="grid grid-cols-[76px_minmax(0,1fr)] lg:grid-cols-[92px_minmax(0,1fr)] gap-3 py-3.5 border-t border-hair">
                   <span className="font-extrabold">{r.label}</span>
                   <span className="flex flex-col gap-1.5 items-start"><Badge kind={seasonKind(r.badge)} size="sm">{r.text}</Badge><span className="text-[15px] leading-normal">{r.note}</span></span>
                 </li>

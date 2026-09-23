@@ -49,7 +49,7 @@ function DayCard({ d, trip, color, onTour, onStays }: { d: TripDay; trip: TripT;
   const nodrink = d.badges.find((b) => b.kind === 'nodrink'); const fest = d.badges.find((b) => b.kind === 'fest');
   return (
     <article className="flex gap-3 lg:gap-4" aria-labelledby={`day-${d.n}`}>
-      <span className="w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-[inset_0_0_0_2px_rgb(var(--ink))] grid place-items-center font-serif text-[26px] lg:text-3xl leading-none shrink-0 text-fixedink" style={{ background: color }}>{d.n}</span>
+      <span className="w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-[inset_0_0_0_1px_rgb(var(--hair-2))] grid place-items-center font-bold text-[26px] lg:text-3xl leading-none shrink-0 text-fixedink" style={{ background: color }}>{d.n}</span>
       <div className="flex-1 min-w-0 p-[18px] lg:p-[22px] rounded-3xl card flex flex-col gap-3.5">
         <div className="flex items-baseline gap-2.5 flex-wrap"><h3 id={`day-${d.n}`} className="m-0 text-[21px] lg:text-2xl font-extrabold tracking-[-0.03em]">{cname(d.city)}</h3><span className={`text-[15px] font-bold ${nodrink ? 'text-chili-d' : ''}`}>Day {d.n}{d.date ? ` · ${fmtDot(d.date)}(${weekday(d.date)})` : ''}</span></div>
         {d.badges.length > 0 && <div className="flex gap-1.5 flex-wrap">{d.badges.map((b, i) => <Badge key={i} kind={b.kind} size="sm">{b.text}</Badge>)}</div>}
@@ -81,7 +81,7 @@ function Editor({ trip, onApply, onCancel }: { trip: TripT; onApply: (s: CourseS
           <span className="flex flex-col"><button type="button" aria-label={`${cname(s.city)} 위로`} onClick={() => mv(i, -1)} disabled={i === 0} className="w-11 h-9 grid place-items-center disabled:opacity-30"><Icon name="up" size={18} /></button><button type="button" aria-label={`${cname(s.city)} 아래로`} onClick={() => mv(i, 1)} disabled={i === st.length - 1} className="w-11 h-9 grid place-items-center disabled:opacity-30"><Icon name="down" size={18} /></button></span>
           <span className="flex-1 text-lg font-extrabold">{cname(s.city)}</span>
           <button type="button" aria-label={`${cname(s.city)} 1박 줄이기`} onClick={() => setSt(st.map((x, k) => (k === i ? { ...x, nights: Math.max(1, x.nights - 1) } : x)))} className="w-11 h-11 rounded-full line grid place-items-center"><Icon name="minus" /></button>
-          <span className="w-12 text-center font-serif text-2xl" aria-live="polite">{s.nights}박</span>
+          <span className="w-12 text-center font-bold text-2xl" aria-live="polite">{s.nights}박</span>
           <button type="button" aria-label={`${cname(s.city)} 1박 늘리기`} onClick={() => setSt(st.map((x, k) => (k === i ? { ...x, nights: x.nights + 1 } : x)))} className="w-11 h-11 rounded-full line grid place-items-center"><Icon name="plus" /></button>
           <button type="button" aria-label={`${cname(s.city)} 빼기`} onClick={() => setSt(st.filter((_, k) => k !== i))} disabled={st.length <= 1} className="w-11 h-11 grid place-items-center text-chili-d disabled:opacity-30"><Icon name="trash" /></button>
         </li>))}</ol>
@@ -136,7 +136,7 @@ function Transport({ trip, legKey, safe }: { trip: TripT; legKey?: string; safe:
           <ul className="m-0 p-0 list-none flex flex-col gap-2">{all.map((o, i) => { const w = why(o); const links = BOOKING[(o.mode.includes('train') ? 'train' : o.mode.includes('bus') || o.mode === 'songthaew' ? 'bus' : o.mode) as keyof typeof BOOKING] ?? BOOKING.bus; return (
             <li key={i} className={`grid lg:grid-cols-[minmax(0,1fr)_auto] gap-3 p-3.5 rounded-2xl ${i === 0 ? 'bg-mint' : 'bg-cloud'} ${w ? 'opacity-55' : ''}`}>
               <div className="flex gap-3 items-start"><Icon name={MODE_ICON[o.mode]} size={22} /><div className="flex flex-col gap-1"><span className="font-extrabold">{o.label} · {o.hoursText}{i === 0 && <span className="ml-2 text-[13px] px-2 py-0.5 rounded-full bg-lagoon text-on-lagoon align-middle">선택됨</span>}</span>
-                <span className="text-sm text-muted">{[o.overnight && '야간 이동', o.ladies && '여성 전용칸 있음', o.note, o.seasonal, '가격 [빈칸]'].filter(Boolean).join(' · ')}</span>{w && <span className="text-sm font-bold text-chili-d">{w}</span>}</div></div>
+                <span className="text-sm text-muted">{[o.overnight && '야간 이동', o.ladies && '여성 전용칸 있음', o.note, o.seasonal, '가격은 예약 사이트에서 확인'].filter(Boolean).join(' · ')}</span>{w && <span className="text-sm font-bold text-chili-d">{w}</span>}</div></div>
               <div className="flex gap-2 flex-wrap lg:justify-end">{links.slice(0, 2).map((b) => online ? <ExtLink key={b.name} href={b.url} className="btn btn-line min-h-11 text-sm px-4">{b.name} <Icon name="ext" size={14} /></ExtLink> : <span key={b.name} className="btn btn-line min-h-11 text-sm px-4 opacity-45">{b.name}</span>)}</div>
             </li>); })}</ul>
           <p className="m-0 text-sm text-muted">검색 조건은 예약 사이트에서 직접 넣어 주세요(프로토타입). 소요 시간은 어림값이에요.</p>
@@ -205,14 +205,14 @@ export default function Trip() {
       <section className="wrap gutter pt-5 lg:pt-10 flex flex-col gap-4 lg:gap-6">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 lg:gap-8">
           <div className="flex flex-col gap-3"><div className="flex gap-2 flex-wrap"><Badge kind={seasonKind(headSeason.badge)}>{trip.month}월 · {headSeason.text}</Badge>{trip.inputs.safe && <Badge kind="safe">안심 일정 ON</Badge>}{trip.offline && <Badge kind="rec">오프라인 저장됨</Badge>}</div>
-            <h1 className="m-0 text-[34px] lg:text-[56px] leading-[1.1] font-extrabold tracking-[-0.05em]">{trip.name} <span className="serif-i text-lagoon">my trip</span></h1></div>
+            <h1 className="m-0 text-[34px] lg:text-[44px] leading-[1.15] font-extrabold tracking-[-0.03em]">{trip.name} <span className="serif-i text-lagoon">my trip</span></h1></div>
           <div className="grid grid-cols-4 lg:flex gap-2 lg:gap-2.5 no-print">{actions.map((a, k) => (
             <button key={a.i} type="button" onClick={a.f} className={`min-h-16 lg:min-h-[52px] rounded-2xl lg:rounded-full lg:px-5 flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 text-xs lg:text-base font-extrabold line ${k === 0 ? 'bg-lagoon text-on-lagoon shadow-none' : 'bg-paper'}`}><Icon name={a.i} size={20} /><span className="lg:hidden">{a.s}</span><span className="hidden lg:inline">{a.t}</span></button>))}</div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 rounded-[22px] card overflow-hidden">
           {[['기간', first.date ? `${fmtDot(first.date)} – ${fmtDot(last.date!)}` : `${trip.month}월 · ${trip.days.length}일`, `${trip.nights}박 ${trip.days.length}일`], ['도시', `${cities.length}곳`, cities.map(cname).join(' → ')], ['총 이동', `약 ${trip.totalHours}시간`, trip.days.some((d) => d.legs.some((l) => l.option.overnight)) ? '야간열차 포함' : '낮 이동'], ['예상 숙박비', lodging ? `약 ${Math.round(lodging / 10000)}만원` : '—', lodging ? '고른 숙소·예산 안 최저가 · 임시 데이터' : `1박 ${trip.inputs.budget}만원 이하 기준`]].map(([a, b, c], i) => (
             <div key={a} className={`flex flex-col gap-1 p-3.5 lg:px-[22px] lg:py-[18px] ${i % 2 ? 'border-l-[1.5px] rule' : ''} ${i === 2 ? 'lg:border-l-[1.5px]' : ''} ${i > 1 ? 'border-t-[1.5px] lg:border-t-0 rule' : ''}`}>
-              <span className="text-[13px] font-extrabold tracking-[.06em] text-muted">{a}</span><span className="font-serif text-[26px] lg:text-4xl leading-none">{b}</span><span className="text-sm text-muted truncate">{c}</span></div>))}
+              <span className="text-[13px] font-extrabold tracking-[.06em] text-muted">{a}</span><span className="font-bold text-[26px] lg:text-4xl leading-none">{b}</span><span className="text-sm text-muted truncate">{c}</span></div>))}
         </div>
         <div className="rounded-[18px] bg-butter text-fixedink">
           <button type="button" aria-expanded={periodOpen} onClick={() => setPeriodOpen(!periodOpen)} className="w-full min-h-[52px] px-[18px] py-3 flex items-center gap-2.5 flex-wrap text-left text-[15px] font-bold"><Icon name="info" size={18} /><span className="font-extrabold">이 기간의 여행 정보</span><span className="hidden lg:inline">{trip.warnings[0]}</span><span className={`ml-auto ${periodOpen ? 'rotate-180' : ''}`}><Icon name="chevd" size={18} /></span></button>

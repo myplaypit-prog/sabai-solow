@@ -22,7 +22,7 @@ export function FeatureCourse({ c, accent }: { c: Course; accent: string }) {
         <Photo k={c.photo} /><span className="absolute left-3 bottom-3 lg:left-auto lg:bottom-auto lg:top-5 lg:right-5 z-[4]"><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
       </Link>
       <div className="grid grid-cols-[64px_minmax(0,1fr)] lg:grid-cols-[120px_minmax(0,1fr)] gap-x-4 lg:gap-x-5 items-start">
-        <span className="serif-i text-[72px] lg:text-[132px] leading-[.78]" style={{ color: accent }}>{c.id}</span>
+        <span className="serif-i text-[72px] lg:text-[96px] leading-[.78]" style={{ color: accent }}>{c.id}</span>
         <div className="flex flex-col gap-2.5">
           <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1"><h3 className="m-0 text-2xl lg:text-4xl font-extrabold tracking-[-0.035em]">{c.name}</h3><span className="text-base lg:text-lg font-bold">{c.days}일 · 도시 {stayCount(c)}곳</span></div>
           <p className="m-0 text-base lg:text-lg leading-relaxed">{c.route}</p>

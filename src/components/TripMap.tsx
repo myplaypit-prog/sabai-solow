@@ -1,7 +1,8 @@
 import { cityById } from '../data/cities';
 import type { Trip } from '../lib/planner';
 
-const PIN = ['rgb(var(--chili))', 'rgb(var(--butter))', 'rgb(var(--hib))', 'rgb(var(--pist))', 'rgb(var(--mint))', 'rgb(var(--lemon))', 'rgb(var(--putty))'];
+// 핀 색: 짙은 글자(#1B2A4A)와 대비가 충분한 밝은 색 7가지(라이트·다크 공통)
+const PIN = ['#F7A07E', '#F5B738', '#8ED5B6', '#B7C6EE', '#FFB59D', '#F5D48A', '#C9DCD2'];
 export const pinColor = (i: number) => PIN[i % PIN.length];
 
 /** 정적 동선 지도(프로토타입). 정식 버전에서는 OpenStreetMap/구글 지도로 교체합니다. */
@@ -34,7 +35,7 @@ export function TripMap({ trip, w = 560, h = 760, focus }: { trip: Trip; w?: num
         return (
           <g key={i} opacity={dim ? 0.35 : 1}>
             <circle cx={x} cy={y} r={22} fill={pinColor(i)} stroke="rgb(var(--ink))" strokeWidth={3} />
-            <text x={x} y={y + 5} textAnchor="middle" fontSize={label.length > 3 ? 11 : 14} fontWeight={800} fill="#2A1B14">{label}</text>
+            <text x={x} y={y + 5} textAnchor="middle" fontSize={label.length > 3 ? 11 : 14} fontWeight={800} fill="#1B2A4A">{label}</text>
             <rect x={x + 28} y={y - 15} width={c.name.length * 15 + 22} height={30} rx={15} fill="rgb(var(--paper))" stroke="rgb(var(--ink))" strokeWidth={1.5} />
             <text x={x + 39} y={y + 5} fontSize={15} fontWeight={800} fill="rgb(var(--ink))">{c.name}</text>
           </g>

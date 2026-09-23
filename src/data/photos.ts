@@ -8,6 +8,9 @@ export const PHOTO_ALT: Record<string, string> = {
   zipline: '산비탈 정글 위를 짚라인으로 건너는 사람', trek: '숲 사이로 이어진 트레킹 길', tea_rows: '곡선으로 이어진 차밭', tea_hill: '매싸롱 차밭 언덕과 정자', lantern: '밤하늘로 떠오르는 이펭 풍등',
   nightmarket: '불 밝힌 야시장 골목', songthaew: '비 온 거리를 달리는 빨간 송태우', whitetemple: '치앙라이 백색사원과 연못', rice: '안개 낀 산골의 초록 논', mist: '산 능선 위 운해', kwai: '칸차나부리 콰이강의 다리',
   lampang: '람빵역 목조 플랫폼', train: '기차 창밖으로 보이는 강과 산', room: '바다가 보이는 부티크 객실', pai: '빠이 캐니언 절벽과 숲', beach: '맑은 날 태국 해변과 롱테일 보트', boatrace: '꽃과 천으로 장식한 롱테일 보트 뱃머리', haze: '연무가 낀 겹겹의 산 능선', storm: '바다 위로 몰려오는 먹구름',
+  cafe: '열대 정원 카페의 나무 테이블에서 혼자 쉬는 여행자',
 };
 export const photoSrc = (k: string) => `./photos/${k}.jpg`;
+/** Google Stitch로 만든 AI 생성 이미지(실제 장소 사진이 아님) */
+export const GENERATED: { key: string; note: string }[] = [{ key: 'cafe', note: 'Google Stitch 생성 이미지(AI) · 홈 첫 화면' }];
 export const ALL_CREDITS = Object.entries(meta as Record<string, { user: string; id: string }>).map(([k, m]) => ({ key: k, name: m.user, url: `https://unsplash.com/photos/${m.id}` }));

@@ -6,15 +6,15 @@ import type { BadgeKind } from '../lib/planner';
 
 type BK = BadgeKind | 'safe' | 'noride';
 const B: Record<BK, { cls: string; icon: string; label: string }> = {
-  rec: { cls: 'bg-pist text-ink line', icon: 'sun', label: '추천' },
-  warn: { cls: 'bg-butter text-fixedink line', icon: 'clock', label: '주의' },
-  save: { cls: 'bg-lagoon text-on-lagoon', icon: 'rain', label: '알뜰' },
-  nodrink: { cls: 'bg-night text-on-night ring-1 ring-inset ring-cloud/60', icon: 'nodrink', label: '금주일' },
-  fest: { cls: 'bg-hib text-ink line', icon: 'spark', label: '축제' },
-  holiday: { cls: 'bg-putty text-ink line', icon: 'calendar', label: '공휴일' },
-  alert: { cls: 'bg-chili-d text-cloud', icon: 'alert', label: '경고' },
-  safe: { cls: 'bg-mint text-ink line', icon: 'shield', label: '안심' },
-  noride: { cls: 'bg-paper text-ink line', icon: 'check', label: '코끼리 탑승 없음' },
+  rec: { cls: 'bg-sage-t text-sage', icon: 'sun', label: '추천' },
+  warn: { cls: 'bg-mango-t text-mango-d', icon: 'clock', label: '주의' },
+  save: { cls: 'bg-sky-t text-sky-d', icon: 'rain', label: '알뜰' },
+  nodrink: { cls: 'bg-alert-t text-alert-d', icon: 'nodrink', label: '금주일' },
+  fest: { cls: 'bg-mango-t text-mango-d', icon: 'spark', label: '축제' },
+  holiday: { cls: 'bg-oat text-marine', icon: 'calendar', label: '공휴일' },
+  alert: { cls: 'bg-primary text-on-primary', icon: 'alert', label: '경고' },
+  safe: { cls: 'bg-sage-t text-sage', icon: 'shield', label: '안심' },
+  noride: { cls: 'bg-card text-sage line', icon: 'check', label: '코끼리 탑승 없음' },
 };
 export const seasonKind = (b: string): BK => (b === 'rec' ? 'rec' : b === 'warn' ? 'warn' : 'save');
 export function Badge({ kind, children, size = 'md' }: { kind: BK; children?: ReactNode; size?: 'sm' | 'md' | 'lg' }) {

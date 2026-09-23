@@ -31,10 +31,10 @@ function AuthFrame({ kicker, title, sub, children }: { kicker: string; title: st
       <div className="relative h-[260px] m-2 lg:m-4 lg:mr-0 lg:h-auto lg:flex-1 rounded-[28px] lg:rounded-[40px] overflow-hidden">
         <Photo k="train" eager />
         <div className="absolute left-3.5 top-3.5 lg:left-8 lg:top-7 z-[4] px-3.5 py-2.5 lg:px-5 lg:py-3.5 rounded-2xl lg:rounded-[20px] bg-cloud"><Logo size={22} /></div>
-        <div className="absolute left-5 right-5 bottom-4 lg:left-10 lg:bottom-10 z-[4] flex flex-col gap-3.5 text-[#FFFCF5]"><span className="serif-i text-5xl lg:text-[88px] leading-[.95] [text-shadow:0_2px_24px_rgba(0,0,0,.4)]">slow &amp; solo</span><span className="hidden lg:inline self-start px-4 py-2.5 rounded-full bg-[rgba(42,27,20,.72)] font-bold">창밖으로 강이 흐르는, 혼자만의 기차 여행</span></div>
+        <div className="absolute left-5 right-5 bottom-4 lg:left-10 lg:bottom-10 z-[4] flex flex-col gap-3.5 text-[#FFFCF5]"><span className="serif-i text-5xl lg:text-[56px] leading-[.95] [text-shadow:0_2px_24px_rgba(0,0,0,.4)]">slow &amp; solo</span><span className="hidden lg:inline self-start px-4 py-2.5 rounded-full bg-[rgba(15,22,40,.6)] font-bold">창밖으로 강이 흐르는, 혼자만의 기차 여행</span></div>
       </div>
       <div className="w-full lg:w-[600px] px-4 lg:px-[88px] py-7 lg:py-14 flex flex-col justify-center gap-6 lg:gap-8 box-border">
-        <div className="flex flex-col gap-2.5"><Kicker>{kicker}</Kicker><h1 className="m-0 text-[34px] lg:text-[52px] leading-[1.12] font-extrabold tracking-[-0.05em]">{title}</h1>{sub && <p className="m-0 text-[17px] leading-relaxed text-muted">{sub}</p>}</div>
+        <div className="flex flex-col gap-2.5"><Kicker>{kicker}</Kicker><h1 className="m-0 text-[34px] lg:text-[52px] leading-[1.12] font-extrabold tracking-[-0.03em]">{title}</h1>{sub && <p className="m-0 text-[17px] leading-relaxed text-muted">{sub}</p>}</div>
         {children}
       </div>
     </main>

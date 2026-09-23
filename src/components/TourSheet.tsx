@@ -29,19 +29,19 @@ export function TourSheet({ id, onClose, onAdd, rainy, context, added = false }:
   useEffect(() => { const prev = document.activeElement as HTMLElement | null; ref.current?.focus(); const k = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current(); }; document.addEventListener('keydown', k); document.body.style.overflow = 'hidden'; return () => { document.removeEventListener('keydown', k); document.body.style.overflow = ''; prev?.focus(); }; }, []);
   return (
     <div className="fixed inset-0 z-[70] flex items-end lg:items-start justify-center lg:pt-16 overflow-y-auto" role="presentation">
-      <button type="button" aria-label="닫기" onClick={onClose} className="fixed inset-0 bg-[rgba(42,27,20,.62)] cursor-default" />
+      <button type="button" aria-label="닫기" onClick={onClose} className="fixed inset-0 bg-[rgba(15,22,40,.55)] cursor-default" />
       <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-title" className="rise relative w-full lg:w-[1040px] max-h-[92vh] lg:max-h-none overflow-y-auto rounded-t-[32px] lg:rounded-[36px] bg-cloud shadow-2xl outline-none">
         <div className="lg:hidden flex justify-center pt-2.5 pb-1.5"><span className="w-12 h-[5px] rounded-full bg-putty" /></div>
         <div className="relative grid lg:grid-cols-[1.6fr_1fr] gap-2 p-2 h-[230px] lg:h-[380px]">
           <div className="zoom rounded-3xl lg:rounded-[28px_12px_12px_12px] overflow-hidden"><Photo k={t.photo} /></div>
           <div className="hidden lg:block zoom rounded-[12px_28px_12px_12px] overflow-hidden"><Photo k={t.photo2} /></div>
           <button type="button" aria-label="닫기" onClick={onClose} className="absolute top-4 right-4 lg:top-[22px] lg:right-[22px] w-11 h-11 lg:w-[52px] lg:h-[52px] rounded-full bg-paper line grid place-items-center"><Icon name="x" size={22} sw={2.4} /></button>
-          {t.noRiding && <span className="absolute left-5 bottom-5 lg:left-7 lg:bottom-[26px] -rotate-[4deg] px-4 py-2.5 rounded-2xl bg-butter text-fixedink shadow-[inset_0_0_0_1.5px_#2A1B14,4px_4px_0_#2A1B14] text-[17px] font-extrabold flex gap-2 items-center"><Icon name="check" sw={2.6} />코끼리 탑승 없음</span>}
+          {t.noRiding && <span className="absolute left-5 bottom-5 lg:left-7 lg:bottom-[26px] -rotate-[4deg] px-4 py-2.5 rounded-2xl bg-butter text-fixedink shadow-soft text-[17px] font-extrabold flex gap-2 items-center"><Icon name="check" sw={2.6} />코끼리 탑승 없음</span>}
         </div>
         <div className="px-4 lg:px-10 pt-5 lg:pt-7 pb-8 lg:pb-9 flex flex-col gap-5">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4">
             <div className="flex flex-col gap-2.5"><Kicker>Local tour{context ? ` · ${context}` : ''}</Kicker>
-              <h2 id="tour-title" className="m-0 text-[40px] lg:text-[52px] leading-[1.05] font-extrabold tracking-[-0.05em]">{t.name}</h2>
+              <h2 id="tour-title" className="m-0 text-[40px] lg:text-[52px] leading-[1.05] font-extrabold tracking-[-0.03em]">{t.name}</h2>
               <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[15px] lg:text-base font-semibold"><span className="flex gap-1.5 items-center"><Icon name="pin" size={18} />{t.cities.map((c) => cityById(c).name).join(', ')}</span><span className="flex gap-1.5 items-center"><Icon name="clock" size={18} />{t.duration}</span><span className="flex gap-1.5 items-center"><Icon name="bag" size={18} />{t.priceBand}</span></div></div>
             <div className="flex gap-2.5">{onAdd && (added
                 ? <span role="status" className="btn btn-line h-14 opacity-70"><Icon name="check" size={18} sw={2.4} />일정에 담았어요</span>

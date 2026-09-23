@@ -4,7 +4,8 @@ import { useApp } from '../state';
 import { COURSES } from '../data/courses';
 import { CITIES, cityById } from '../data/cities';
 import { tourById } from '../data/tours';
-import { ALL_CREDITS } from '../data/photos';
+import { ALL_CREDITS, GENERATED } from '../data/photos';
+import { EMERGENCY, EMERGENCY_SRC } from '../components/Layout';
 import { stayName } from '../data/stays';
 import { listTrips, deleteTrip, getTrip } from '../lib/trips';
 import { deleteAll } from '../lib/auth';
@@ -22,10 +23,10 @@ import { TourBlocks } from '../components/TourSheet';
 export function Courses() {
   return (
     <main className="wrap gutter pt-8 lg:pt-14 pb-28 lg:pb-40 flex flex-col gap-10">
-      <div className="flex flex-col gap-3"><Kicker>8 routes</Kicker><h1 className="m-0 text-[40px] lg:text-[80px] leading-[1.05] font-extrabold tracking-[-0.05em]">추천 코스 <span className="serif-i text-lagoon">A—H</span></h1><p className="m-0 max-w-[620px] text-lg leading-relaxed">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요.</p></div>
+      <div className="flex flex-col gap-3"><Kicker>8 routes</Kicker><h1 className="m-0 text-[40px] lg:text-[56px] leading-[1.05] font-extrabold tracking-[-0.03em]">추천 코스 <span className="serif-i text-lagoon">A—H</span></h1><p className="m-0 max-w-[620px] text-lg leading-relaxed">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요.</p></div>
       <div className="grid lg:grid-cols-2 gap-10"><FeatureCourse c={COURSES[0]} accent="rgb(var(--chili-d))" /><FeatureCourse c={COURSES[5]} accent="rgb(var(--lagoon))" /></div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14">{COURSES.filter((c) => !'AF'.includes(c.id)).map((c) => <SmallCourse key={c.id} c={c} />)}</div>
-      <section className="flex flex-col gap-5"><h2 className="m-0 text-3xl lg:text-5xl font-extrabold tracking-[-0.04em]">추천 소도시 20</h2>
+      <section className="flex flex-col gap-5"><h2 className="m-0 text-3xl lg:text-5xl font-extrabold tracking-[-0.03em]">추천 소도시 20</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{CITIES.filter((c) => c.id !== 'bangkok').map((c) => (
           <article key={c.id} className="card rounded-[24px] overflow-hidden flex flex-col"><div className="h-36"><Photo k={c.photo} /></div>
             <div className="p-4 flex flex-col gap-1.5"><div className="flex justify-between items-baseline"><h3 className="m-0 text-xl font-extrabold">{c.name}</h3><span className="text-sm font-bold">혼행 {'●'.repeat(c.solo)}<span className="text-muted">{'○'.repeat(5 - c.solo)}</span><span className="sr-only">{c.solo}점</span></span></div>
@@ -42,7 +43,7 @@ export function Season() {
   const ok = diffDays(start, end) >= 0;
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-7">
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-5"><div className="flex flex-col gap-3"><Kicker>Season guide</Kicker><h1 className="m-0 text-[36px] lg:text-[64px] leading-[1.1] font-extrabold tracking-[-0.05em]">언제 가면 좋을까요?</h1></div>
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-5"><div className="flex flex-col gap-3"><Kicker>Season guide</Kicker><h1 className="m-0 text-[36px] lg:text-[48px] leading-[1.1] font-extrabold tracking-[-0.03em]">언제 가면 좋을까요?</h1></div>
         <div role="tablist" aria-label="시기 입력 방식" className="flex p-1.5 rounded-full bg-sand gap-1 self-start">{(['dates', 'tips'] as const).map((m) => <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={`min-h-11 lg:min-h-12 px-5 rounded-full ${mode === m ? 'bg-night text-on-night font-extrabold' : 'font-bold'}`}>{m === 'dates' ? '기간 입력' : '시기 팁'}</button>)}</div></div>
       {mode === 'dates' ? (
         <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -66,7 +67,7 @@ export function MyTrips() {
   if (!user) return null;
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-8">
-      <div className="flex flex-col gap-3"><Kicker>My trips</Kicker><h1 className="m-0 text-[36px] lg:text-[64px] leading-[1.1] font-extrabold tracking-[-0.05em]">내 일정</h1><p className="m-0 text-muted">{user.email} · 저장 위치: {storageMode()} · 브라우저 데이터를 지우면 사라져요.</p></div>
+      <div className="flex flex-col gap-3"><Kicker>My trips</Kicker><h1 className="m-0 text-[36px] lg:text-[48px] leading-[1.1] font-extrabold tracking-[-0.03em]">내 일정</h1><p className="m-0 text-muted">{user.email} · 저장 위치: {storageMode()} · 브라우저 데이터를 지우면 사라져요.</p></div>
       {trips === null ? <p aria-busy="true">불러오는 중…</p> : trips.length === 0 ? (
         <div className="card rounded-[28px] p-8 flex flex-col items-start gap-4"><span className="text-2xl font-extrabold">아직 만든 일정이 없어요</span><span>시기와 취향만 알려 주면 5분이면 초안이 나와요.</span><Btn to="/plan">첫 일정 만들기</Btn></div>
       ) : (
@@ -107,11 +108,10 @@ export function Safety() {
   const [big, setBig] = useState<string | null>(null);
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-8">
-      <div className="flex flex-col gap-3"><Kicker>Safety pack</Kicker><h1 className="m-0 text-[36px] lg:text-[64px] leading-[1.1] font-extrabold tracking-[-0.05em]">혼행 안심 팩</h1><p className="m-0 text-muted">오프라인에서도 보이도록 글자 중심으로 만들었어요.</p></div>
-      <div className="grid md:grid-cols-3 gap-4">
-        <section className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-extrabold text-muted">관광경찰</span><span className="font-serif text-6xl leading-none select-all">1155</span><span className="text-[15px]">영어 가능 · 24시간</span></section>
-        <section className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-extrabold text-muted">주태국 대한민국 대사관</span><span className="text-2xl font-extrabold select-all">[대사관 연락처 확인 필요]</span><span className="text-[15px]">출발 전 외교부 해외안전여행에서 확인해 주세요.</span></section>
-        <section className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-extrabold text-muted">여행경보</span><span className="text-[15px] leading-relaxed">송클라 42번 국도 이남·파타니·나라티왓·얄라, 태국–캄보디아 국경 50km 이내, 딱주, 매싸이·치앙센 국경검문소는 추천에서 모두 뺐어요.</span><span className="text-sm text-muted">확인일 [빈칸] · 외교부 해외안전여행 기준</span></section>
+      <div className="flex flex-col gap-3"><Kicker>Safety pack</Kicker><h1 className="m-0 text-[36px] lg:text-[48px] leading-[1.1] font-extrabold tracking-[-0.03em]">혼행 안심 팩</h1><p className="m-0 text-muted">오프라인에서도 보이도록 글자 중심으로 만들었어요.</p></div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {EMERGENCY.map((e) => <section key={e.num} className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-bold text-muted">{e.label}</span><a href={`tel:${e.tel}`} className="text-3xl lg:text-4xl font-extrabold leading-none select-all hover:text-primary">{e.num}</a><span className="text-[15px]">{e.note}</span></section>)}
+        <section className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-extrabold text-muted">여행경보</span><span className="text-[15px] leading-relaxed">송클라 42번 국도 이남·파타니·나라티왓·얄라, 태국–캄보디아 국경 50km 이내, 딱주, 매싸이·치앙센 국경검문소는 추천에서 모두 뺐어요.</span><span className="text-sm text-muted">2026-09-23 확인 · <ExtLink href={EMERGENCY_SRC} className="underline">외교부 해외안전여행</ExtLink> 기준 · 연락처도 같은 출처</span></section>
       </div>
       <section className="flex flex-col gap-4"><h2 className="m-0 text-2xl lg:text-3xl font-extrabold">태국어 목적지 카드</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">{THAI_CITIES.map((c) => <button key={c} type="button" onClick={() => setBig(c)} className="text-left"><DestCard city={c} /></button>)}</div>
@@ -137,7 +137,7 @@ export function PrintView() {
         <ul className="m-0 pl-5">{t.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
         <PeriodPanel start={t.days[0].date} end={t.days[t.days.length - 1].date} month={t.days[0].date ? undefined : t.month} compact /></article>
       {t.days.map((d) => (
-        <article key={d.n} className="print-page max-w-[800px] mx-auto px-6 py-8 flex flex-col gap-3 border-t border-ink/20">
+        <article key={d.n} className="print-page max-w-[800px] mx-auto px-6 py-8 flex flex-col gap-3 border-t border-hair">
           <h2 className="m-0 text-2xl font-extrabold">Day {d.n} · {cityById(d.city).name}{d.date ? ` · ${fmtDot(d.date)}(${weekday(d.date)})` : ''}</h2>
           {d.badges.map((b, i) => <p key={i} className="m-0 font-bold">[{b.text}] {b.message}</p>)}
           {d.legs.map((l) => <p key={l.from} className="m-0">이동: {cityById(l.from).name} → {cityById(l.to).name} · {l.option.label} {l.option.hoursText}</p>)}
@@ -145,7 +145,7 @@ export function PrintView() {
           {d.tour && <div><b>투어: {tourById(d.tour).name}</b><TourBlocks id={d.tour as TourType} /></div>}
           {d.stay && <p className="m-0">숙소: {stayName(t.notes?.[`stay:${d.city}`]) ?? '아직 고르지 않았어요'} · 예약 번호: {t.notes?.[`res:${d.n}`] ?? '________'}</p>}
         </article>))}
-      <article className="max-w-[800px] mx-auto px-6 py-8 flex flex-col gap-3 border-t border-ink/20"><h2 className="m-0 text-2xl font-extrabold">비상 연락처 · 태국어 목적지 카드</h2><p className="m-0">관광경찰 1155 · 주태국 대한민국 대사관 [연락처 확인 필요]</p>
+      <article className="max-w-[800px] mx-auto px-6 py-8 flex flex-col gap-3 border-t border-hair"><h2 className="m-0 text-2xl font-extrabold">비상 연락처 · 태국어 목적지 카드</h2><p className="m-0">{EMERGENCY.map((e) => `${e.label} ${e.num}`).join(' · ')}</p>
         <div className="grid grid-cols-2 gap-3">{t.cityIds.filter((c) => c !== 'bangkok').map((c) => <DestCard key={c} city={c} />)}</div></article>
     </main>
   );
@@ -153,7 +153,8 @@ export function PrintView() {
 
 export function Credits() {
   return (
-    <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-6"><Kicker>Photo credits</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.05em]">사진 출처</h1><p className="m-0">모든 사진은 Unsplash 라이선스(무료, 상업적 이용 가능)로 쓰고 있어요. 공개 전 숙소 사진은 실제 숙소 사진으로 바꿔야 해요.</p>
+    <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-6"><Kicker>Photo credits</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.03em]">사진 출처</h1><p className="m-0">실사 사진은 Unsplash 라이선스(무료, 상업적 이용 가능)로 쓰고 있어요. 홈 첫 화면 이미지는 Google Stitch로 만든 AI 생성 이미지예요. 공개 전 숙소 사진은 실제 숙소 사진으로 바꿔야 해요.</p>
+      <ul className="m-0 p-0 list-none grid sm:grid-cols-2 lg:grid-cols-3 gap-2">{GENERATED.map((g) => <li key={g.key} className="flex gap-3 items-center p-2 rounded-2xl card"><span className="w-16 h-12 rounded-xl overflow-hidden block shrink-0"><Photo k={g.key} /></span><span className="text-[15px]"><b>{g.note}</b><span className="block text-sm text-muted">{g.key}</span></span></li>)}</ul>
       <ul className="m-0 p-0 list-none grid sm:grid-cols-2 lg:grid-cols-3 gap-2">{ALL_CREDITS.map((c) => <li key={c.key} className="flex gap-3 items-center p-2 rounded-2xl card"><span className="w-16 h-12 rounded-xl overflow-hidden block shrink-0"><Photo k={c.key} /></span><span className="text-[15px]"><ExtLink href={c.url} className="font-bold underline">{c.name}</ExtLink><span className="block text-sm text-muted">{c.key}</span></span></li>)}</ul></main>
   );
 }
@@ -163,7 +164,7 @@ export function TourPage() {
   if (!t) return <main className="p-10">투어를 찾을 수 없어요.</main>;
   return (
     <main className="wrap gutter pt-8 pb-28 flex flex-col gap-6"><div className="h-[260px] lg:h-[420px] rounded-[28px] overflow-hidden"><Photo k={t.photo} eager /></div>
-      <Kicker>Local tour</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.05em]">{t.name}</h1><span className="text-[15px]">{t.cities.map((c) => cityById(c).name).join(', ')} · {t.duration} · {t.priceBand}</span>
+      <Kicker>Local tour</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.03em]">{t.name}</h1><span className="text-[15px]">{t.cities.map((c) => cityById(c).name).join(', ')} · {t.duration} · {t.priceBand}</span>
       {t.noRiding && <div><Badge kind="noride" /></div>}<TourBlocks id={t.id} /></main>
   );
 }
