@@ -32,12 +32,12 @@ export function BigCourse({ c, wide }: { c: Course; wide?: boolean }) {
       <Link to={`/plan?course=${c.id}`} className="zoom relative block h-[240px] lg:h-[380px] overflow-hidden" aria-label={`${c.name} 코스로 일정 시작`}>
         <Photo k={c.photo} />
         <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[rgba(15,22,40,.78)] to-transparent" aria-hidden="true" />
-        <span className="absolute left-4 top-4 flex gap-2 flex-wrap"><span className="px-3 py-1 rounded-full bg-card/95 text-[12px] font-bold text-primary">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
-        <span className="absolute left-5 right-5 bottom-4 text-white flex flex-col gap-1"><span className="text-[12px] font-bold tracking-[.08em] uppercase opacity-90">{c.regions.join(' · ')}</span><span className="text-[22px] lg:text-[26px] font-extrabold tracking-[-0.02em] leading-tight">{c.name} ({c.days}일)</span><span className="text-[14px] opacity-90">{c.route}</span></span>
+        <span className="absolute left-4 top-4 flex gap-2 flex-wrap"><span className="px-3 py-1 rounded-full bg-card/95 text-[13px] font-bold text-primary">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
+        <span className="absolute left-5 right-5 bottom-4 text-white flex flex-col gap-1"><span className="text-[13px] font-bold tracking-[.08em] uppercase opacity-90">{c.regions.join(' · ')}</span><span className="text-[22px] lg:text-[26px] font-extrabold tracking-[-0.02em] leading-tight">{c.name} ({c.days}일)</span><span className="text-[14px] opacity-90">{c.route}</span></span>
       </Link>
       <div className="p-5 lg:p-6 flex flex-col gap-4 flex-1">
         <dl className="m-0 grid grid-cols-3 gap-3">
-          {[['추천 일정', `${st.nights}박 ${st.nights + 1}일`], ['1박 평균 숙소비', st.avg ? `약 ${st.avg}만원` : '—'], ['혼행 적합도', `${st.solo} / 5`]].map(([a, b]) => <div key={a} className="flex flex-col gap-0.5"><dt className="text-[12px] font-semibold text-slate">{a}</dt><dd className="m-0 text-[18px] font-bold">{b}</dd></div>)}
+          {[['추천 일정', `${st.nights}박 ${st.nights + 1}일`], ['1박 평균 숙소비', st.avg ? `약 ${st.avg}만원` : '—'], ['혼행 적합도', `${st.solo} / 5`]].map(([a, b]) => <div key={a} className="flex flex-col gap-0.5"><dt className="text-[13px] font-semibold text-slate">{a}</dt><dd className="m-0 text-[18px] font-bold">{b}</dd></div>)}
         </dl>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3 border-t rule">
           <span className="text-[14px] text-slate flex items-center gap-1.5"><Icon name="route" size={16} />{c.transport}</span>
@@ -53,7 +53,7 @@ export function TextCourse({ c }: { c: Course }) {
   const hl = [...new Set(c.stops.filter((x) => x.nights > 0).map((x) => x.city))].slice(0, 3).map((id) => `${cityById(id).name} ${cityById(id).highlights[0] ?? ''}`.trim()); // 같은 도시를 두 번 들르는 코스는 한 번만
   return (
     <article className="lift card rounded-3xl p-5 lg:p-6 flex flex-col gap-3 lg:col-span-6">
-      <div className="flex flex-wrap items-center gap-2"><span className="px-3 py-1 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></div>
+      <div className="flex flex-wrap items-center gap-2"><span className="px-3 py-1 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></div>
       <h3 className="m-0 text-[20px] lg:text-[22px] font-bold tracking-[-0.015em]">{c.name} ({c.days}일)</h3>
       <p className="m-0 text-[15px] leading-relaxed text-slate">{c.route} · {c.transport}</p>
       <ul className="m-0 p-0 list-none flex flex-wrap gap-2">{hl.map((h) => <li key={h} className="px-3 py-1.5 rounded-full bg-linen line text-[13px] font-semibold">{h}</li>)}</ul>

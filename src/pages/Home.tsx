@@ -50,7 +50,7 @@ function QuickMatch() {
   const qs = new URLSearchParams({ course: pick.id, days: String(days), pace, interests: THEMES[theme].i.join(',') }).toString();
   return (
     <section aria-labelledby="qm" className="card rounded-3xl p-5 lg:p-6 flex flex-col gap-4">
-      <div className="flex justify-between items-center gap-3"><h2 id="qm" className="m-0 text-[18px] font-bold flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-saffron" aria-hidden="true" />1분 소도시 매칭</h2><span className="px-2.5 py-1 rounded-full bg-sage-t text-sage text-[12px] font-bold">이번 달 계절 반영</span></div>
+      <div className="flex justify-between items-center gap-3"><h2 id="qm" className="m-0 text-[18px] font-bold flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-saffron" aria-hidden="true" />1분 소도시 매칭</h2><span className="px-2.5 py-1 rounded-full bg-sage-t text-sage text-[13px] font-bold">이번 달 계절 반영</span></div>
       <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-3">
         <Select id="qm-days" label="여행 기간" value={days} onChange={(v) => setDays(+v)}>{DURATIONS.map((x) => <option key={x.d} value={x.d}>{x.l}</option>)}</Select>
         <Select id="qm-pace" label="이동 강도" value={pace} onChange={(v) => setPace(v as Intensity)}>{PACES.map((x) => <option key={x.v} value={x.v}>{x.l}</option>)}</Select>
@@ -217,7 +217,7 @@ export default function Home() {
       <section aria-labelledby="kit" className="wrap gutter pt-14 lg:pt-20">
         <div className="rounded-3xl bg-night text-on-night p-6 lg:p-10 grid lg:grid-cols-12 gap-6 items-center overflow-hidden relative">
           <div className="lg:col-span-8 flex flex-col gap-4 relative">
-            <span className="self-start inline-flex items-center gap-2 px-3 min-h-8 rounded-full bg-sage text-white text-[13px] font-bold"><Icon name="download" size={16} />오프라인 저장 · 인쇄용 일정표</span>
+            <span className="self-start inline-flex items-center gap-2 px-3 min-h-8 rounded-full bg-sage text-on-primary text-[13px] font-bold"><Icon name="download" size={16} />오프라인 저장 · 인쇄용 일정표</span>
             <h2 id="kit" className="m-0 text-[26px] lg:text-[34px] leading-[1.3] font-bold tracking-[-0.02em]">출발 전 꼭 챙기세요,<br className="lg:hidden" /> 태국 소도시 혼행 안심 포켓 가이드</h2>
             <p className="m-0 text-[16px] leading-relaxed text-white/85">숙소·터미널 태국어 목적지 카드, 비상 연락처, 금주일·축제 캘린더를 한곳에 모았어요. 일정은 오프라인으로 저장하거나 인쇄(PDF)해서 챙길 수 있어요.</p>
             <ul className="m-0 p-0 list-none flex flex-wrap gap-x-5 gap-y-2 text-[15px]">{['태국어 목적지 카드', '관광경찰 1155 · 대사관 번호', '1박 10만원 이하 숙소 기준'].map((x) => <li key={x} className="flex items-center gap-2"><span className="text-mango"><Icon name="check" size={18} sw={2.4} /></span>{x}</li>)}</ul>

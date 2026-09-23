@@ -162,7 +162,7 @@ export default function Plan() {
       {/* 머리 */}
       <section className="wrap gutter pt-8 lg:pt-12 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
         <div className="flex flex-col gap-3 max-w-[720px]">
-          <span className="self-start inline-flex items-center gap-2 px-3 min-h-8 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold tracking-[.06em]"><span className="w-1.5 h-1.5 rounded-full bg-saffron" aria-hidden="true" />SABAI SOLOW 맞춤 동선 진단</span>
+          <span className="self-start inline-flex items-center gap-2 px-3 min-h-8 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold tracking-[.06em]"><span className="w-1.5 h-1.5 rounded-full bg-saffron" aria-hidden="true" />SABAI SOLOW 맞춤 동선 진단</span>
           <h1 className="m-0 text-[32px] leading-[1.25] lg:text-[48px] lg:leading-[1.2] font-extrabold tracking-[-0.03em]">나만을 위한 느긋한 <span className="text-primary">소도시 여정</span> 만들기</h1>
           <p className="m-0 text-[16px] lg:text-[17px] leading-relaxed text-slate">치앙마이부터 빠이, 난, 치앙칸까지. 다섯 가지만 차례로 고르면 무리 없는 슬로우 일정을 짜 드려요. 언제든 이전 단계로 돌아가 고칠 수 있어요.</p>
         </div>
@@ -187,8 +187,8 @@ export default function Plan() {
               <li key={x.t} className="min-w-0">
                 <button type="button" onClick={() => go(n)} disabled={!can} aria-current={cur ? 'step' : undefined}
                   className={`w-full min-h-12 rounded-2xl px-1 py-2 flex flex-col lg:flex-row items-center gap-1 lg:gap-2.5 text-center lg:text-left min-w-0 ${cur ? 'bg-saffron-t' : can ? 'hover:bg-oat' : 'cursor-default'}`}>
-                  <span className={`w-8 h-8 lg:w-9 lg:h-9 rounded-full grid place-items-center text-[13px] font-bold shrink-0 ${cur ? 'bg-primary text-on-primary' : done ? 'bg-sage text-white' : 'bg-oat text-slate'}`}>{done ? <Icon name="check" size={16} sw={2.6} /> : n + 1}</span>
-                  <span className="flex flex-col min-w-0"><span className={`text-[12px] lg:text-[14px] truncate ${cur ? 'font-extrabold text-primary' : can ? 'font-bold' : 'font-semibold text-slate'}`}>{x.t}</span><span className="hidden lg:block text-[12px] text-slate truncate">{can ? x.s : '\u00a0'}</span></span>
+                  <span className={`w-8 h-8 lg:w-9 lg:h-9 rounded-full grid place-items-center text-[13px] font-bold shrink-0 ${cur ? 'bg-primary text-on-primary' : done ? 'bg-sage text-on-primary' : 'bg-oat text-slate'}`}>{done ? <Icon name="check" size={16} sw={2.6} /> : n + 1}</span>
+                  <span className="flex flex-col min-w-0"><span className={`text-[12px] sm:text-[13px] lg:text-[14px] truncate ${cur ? 'font-extrabold text-primary' : can ? 'font-bold' : 'font-semibold text-slate'}`}>{x.t}</span><span className="hidden lg:block text-[13px] text-slate truncate">{can ? x.s : '\u00a0'}</span></span>
                 </button>
               </li>
             );
@@ -246,13 +246,13 @@ export default function Plan() {
             <div className="rounded-2xl bg-linen line p-4 lg:p-5 flex flex-col gap-3">
               <div className="flex justify-between items-center gap-3"><span className="flex flex-col"><label htmlFor="days" className="text-[15px] font-bold">총 여행 기간</label><span className="text-[13px] text-slate">{dateDays ? '날짜로 정해졌어요. 바꾸려면 날짜를 고쳐 주세요.' : '소도시 간 이동 피로도를 감안한 추천: 6~9일'}</span></span><span className="card rounded-xl px-4 py-2 text-[26px] font-extrabold tracking-[-0.02em] whitespace-nowrap"><span className="text-primary">{inp.days - 1}</span><span className="text-[15px] font-bold mx-0.5">박</span> <span className="text-primary">{inp.days}</span><span className="text-[15px] font-bold ml-0.5">일</span></span></div>
               <input id="days" type="range" min={3} max={21} value={inp.days} disabled={!!dateDays} onChange={(e) => set({ days: +e.target.value })} className="w-full h-11 accent-[rgb(var(--primary))]" />
-              <div className="flex justify-between text-[12px] text-slate"><span>3일 (단기 휴식)</span><span className="hidden sm:inline">7일 (추천)</span><span className="hidden sm:inline">14일 (슬로우 2주)</span><span>21일 (소도시 완주)</span></div>
+              <div className="flex justify-between text-[13px] text-slate"><span>3일 (단기 휴식)</span><span className="hidden sm:inline">7일 (추천)</span><span className="hidden sm:inline">14일 (슬로우 2주)</span><span>21일 (소도시 완주)</span></div>
             </div>
             <fieldset className="m-0 p-0 border-0 flex flex-col gap-3"><legend className="text-[15px] font-bold mb-3">1박 숙소 예산 상한 (1인 1실 기준)</legend>
               <div className="grid sm:grid-cols-3 gap-3">{BUDGETS.map((b) => { const on = inp.budget === b.v; return (
                 <label key={b.v} className={`relative cursor-pointer rounded-2xl p-4 flex flex-col gap-1.5 ${on ? 'bg-card shadow-[inset_0_0_0_2px_rgb(var(--primary))]' : 'bg-oat hover:bg-hair'}`}>
                   <input type="radio" name="budget" className="sr-only" checked={on} onChange={() => set({ budget: b.v })} />
-                  <span className="flex justify-between gap-2"><b className="text-[15px]">{b.t}</b>{on ? <span className="px-2 py-0.5 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold">선택됨</span> : <span className="text-[13px] text-slate">{b.p}</span>}</span>
+                  <span className="flex justify-between gap-2"><b className="text-[15px]">{b.t}</b>{on ? <span className="px-2 py-0.5 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold">선택됨</span> : <span className="text-[13px] text-slate">{b.p}</span>}</span>
                   {on && <span className="text-[14px] font-bold text-primary">{b.p}</span>}
                   <span className="text-[13px] leading-snug text-slate">{b.d}</span>
                 </label>); })}</div>
@@ -310,7 +310,7 @@ export default function Plan() {
           <figure className="zoom m-0 relative h-[240px] lg:h-[280px] rounded-3xl overflow-hidden shadow-soft">
             <Photo k={preview.photo} />
             <span className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-[rgba(15,22,40,.8)] to-transparent" aria-hidden="true" />
-            <figcaption className="absolute left-4 right-4 bottom-4 text-white flex flex-col gap-1"><span className="text-[12px] font-bold tracking-[.06em] opacity-90">{inp.courseId ? '고른 코스' : '지금 조건에 맞는 코스'}</span><span className="text-[20px] font-extrabold leading-snug">{preview.id} · {preview.name}</span><span className="text-[13px] opacity-90">{preview.route}</span></figcaption>
+            <figcaption className="absolute left-4 right-4 bottom-4 text-white flex flex-col gap-1"><span className="text-[13px] font-bold tracking-[.06em] opacity-90">{inp.courseId ? '고른 코스' : '지금 조건에 맞는 코스'}</span><span className="text-[20px] font-extrabold leading-snug">{preview.id} · {preview.name}</span><span className="text-[13px] opacity-90">{preview.route}</span></figcaption>
           </figure>
           {inp.courseId && <Link to="/plan" onClick={() => set({ courseId: undefined })} className="-mt-2 self-start min-h-11 inline-flex items-center text-[14px] font-bold text-primary underline">조건에 맞게 자동으로 고르기</Link>}
           <section aria-labelledby="pv" className="card rounded-3xl p-5 flex flex-col gap-3">

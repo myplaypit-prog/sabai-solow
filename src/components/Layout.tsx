@@ -72,7 +72,7 @@ export function TabBar() {
   return (
     <nav aria-label="하단 탭" className="lg:hidden fixed left-3 right-3 z-40 glass rounded-[22px] flex px-1 no-print" style={{ bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
       {T.map((t) => (
-        <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => `flex-1 min-h-[60px] flex flex-col items-center justify-center gap-0.5 text-[12px] ${isActive ? 'font-bold text-marine' : 'font-medium text-slate'}`}>
+        <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => `flex-1 min-h-[60px] flex flex-col items-center justify-center gap-0.5 text-[13px] ${isActive ? 'font-bold text-marine' : 'font-medium text-slate'}`}>
           {({ isActive }) => <><span className={isActive ? 'text-primary' : ''}><Icon name={t.i} size={22} sw={isActive ? 2.2 : 1.8} /></span>{t.l}<span className={`w-1 h-1 rounded-full ${isActive ? 'bg-saffron' : 'bg-transparent'}`} aria-hidden="true" /></>}
         </NavLink>
       ))}
@@ -109,7 +109,7 @@ export function Footer() {
         <Hotline />
         <div className="grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-6 flex flex-col gap-3">
-            <div className="flex items-center gap-3"><Logo size={22} /><span className="px-2.5 py-1 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold">태국 소도시 혼행</span></div>
+            <div className="flex items-center gap-3"><Logo size={22} /><span className="px-2.5 py-1 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold">태국 소도시 혼행</span></div>
             <p className="m-0 text-[15px] leading-relaxed text-slate max-w-[520px]">복잡한 단체 패키지 대신 빠이, 난, 치앙칸 같은 조용한 소도시의 느린 하루를 제안해요. 내 리듬에 맞춘 안전하고 다정한 힐링 여정을 설계해 보세요.</p>
             <span className="text-[14px] text-slate flex items-center gap-2"><Icon name="offline" size={16} />오프라인 저장 · 인쇄용 일정표(PDF) 지원</span>
           </div>
