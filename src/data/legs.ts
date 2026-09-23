@@ -33,7 +33,6 @@ const L: Leg[] = [
   { from: 'bangkok', to: 'trang', options: [o('night_train', '야간열차 침대칸', 16, '15~16h', { overnight: true }), o('flight', '국내선', 1.5, '1h30m')] },
   { from: 'trang', to: 'kohlipe', options: [o('ferry', '미니밴 + 스피드보트', 3.5, '빡바라 항까지 1.5~2h + 1.5h', { seasonal: '11~5월 운항 · 5~10월 대폭 감편' })] },
 ];
-export const LEGS = L;
 export const hasLeg = (from: string, to: string) => L.some((l) => (l.from === from && l.to === to) || (l.from === to && l.to === from));
 /** 직통 구간이 없을 때 거쳐 갈 교통 거점 */
 export const HUBS = ['bangkok', 'chiangmai', 'suratthani', 'trang'];

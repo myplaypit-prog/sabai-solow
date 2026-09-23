@@ -1,6 +1,6 @@
 import { EVENTS } from '../data/events';
 import { PERIOD_REGIONS, regionSeason } from '../data/seasons';
-import { monthOf, inRange, fmtMD } from './dates';
+import { monthOf, fmtMD } from './dates';
 import type { CalendarEvent } from '../data/types';
 
 export interface PeriodInfo { label: string; months: number[]; regions: { label: string; badge: string; text: string; note: string }[]; price: string; risks: string[]; events: CalendarEvent[]; rules: string[]; avoid: string[]; }
@@ -38,4 +38,3 @@ export function periodInfo(opts: { start?: string; end?: string; month?: number 
   if (months.some((x) => x === 3 || x === 4)) avoid.push('치앙마이·치앙라이·매싸롱·매홍손·난(호흡기 질환자)');
   return { label, months, regions, price, risks: [...new Set(risks)], events, rules, avoid };
 }
-export const eventHit = (e: CalendarEvent, d: string) => (e.from && e.to ? inRange(d, e.from, e.to) : false);

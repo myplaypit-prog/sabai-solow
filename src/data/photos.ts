@@ -1,6 +1,5 @@
 import meta from './photo-meta.json';
 // 모든 사진: Unsplash 무료 라이선스. 출처(촬영자)를 함께 기록합니다.
-export type PhotoKey = keyof typeof meta;
 export const PHOTO_ALT: Record<string, string> = {
   khaosok: '카오속 치어란 호수의 에메랄드빛 물과 석회암 절벽', solo_hat: '모자를 쓴 여행자가 산골 마을을 내려다보는 뒷모습', solo_ruins: '모자를 쓴 여행자가 사원 유적을 바라보는 뒷모습',
   north_temple: '북부 란나 양식 사원과 하얀 탑', banrakthai: '매홍손 반락타이 마을의 차밭과 전통 가옥', karst_boat: '석회암 봉우리 사이 강가에 정박한 롱테일 보트', sukhothai: '해 질 녘 수코타이 역사공원 유적',
@@ -11,5 +10,4 @@ export const PHOTO_ALT: Record<string, string> = {
   lampang: '람빵역 목조 플랫폼', train: '기차 창밖으로 보이는 강과 산', room: '바다가 보이는 부티크 객실', pai: '빠이 캐니언 절벽과 숲', beach: '맑은 날 태국 해변과 롱테일 보트', boatrace: '꽃과 천으로 장식한 롱테일 보트 뱃머리', haze: '연무가 낀 겹겹의 산 능선', storm: '바다 위로 몰려오는 먹구름',
 };
 export const photoSrc = (k: string) => `./photos/${k}.jpg`;
-export const photoCredit = (k: string) => { const m = (meta as Record<string, { user: string; username: string; id: string }>)[k]; return m ? { name: m.user, url: `https://unsplash.com/photos/${m.id}` } : null; };
 export const ALL_CREDITS = Object.entries(meta as Record<string, { user: string; id: string }>).map(([k, m]) => ({ key: k, name: m.user, url: `https://unsplash.com/photos/${m.id}` }));
