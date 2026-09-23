@@ -90,7 +90,7 @@ function Courses() {
       </div>
       {rest.length > 0 && (
         <div className="mt-4 lg:mt-5 card rounded-3xl p-5 lg:px-7 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-6">
-          <span className="flex items-center gap-2 font-bold"><span className="text-primary"><Icon name="compass" size={20} /></span>남은 코스도 준비돼 있어요</span>
+          <span className="flex items-center gap-2 font-bold"><span className="text-primary"><Icon name="compass" size={20} /></span>다른 코스도 살펴보세요</span>
           <ul className="m-0 p-0 list-none flex flex-wrap gap-2 flex-1">{rest.map((c) => <li key={c.id}><Link to={`/plan?course=${c.id}`} className="inline-flex items-center gap-1.5 min-h-10 px-3.5 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold"><b className="text-primary">{c.id}</b>{c.name} ({c.days}일)</Link></li>)}</ul>
           <Link to="/courses" className="text-[15px] font-bold text-primary inline-flex items-center gap-1 min-h-11">코스 8선 전체 보기<Icon name="ext" size={16} /></Link>
         </div>
@@ -126,9 +126,9 @@ export default function Home() {
       {/* 히어로 */}
       <section className="wrap gutter pt-8 lg:pt-12 grid lg:grid-cols-12 gap-6 lg:gap-8">
         <div className="lg:col-span-7 flex flex-col gap-5 lg:gap-6">
-          <span className="self-start inline-flex items-center gap-2 px-3.5 min-h-9 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold"><Icon name="spark" size={16} />30~50대를 위한 쉼표의 기술 · Sabai Solow</span>
+          <span className="self-start inline-flex items-center gap-2 px-3.5 min-h-9 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold"><Icon name="spark" size={16} />혼자 누리는 태국 소도시의 쉼표 여행</span>
           <h1 className="m-0 text-[36px] leading-[1.22] lg:text-[56px] lg:leading-[1.15] font-extrabold tracking-[-0.03em]">북적이는 방콕은 잠시 안녕,<br /><span className="text-primary">오롯이 나에게 집중하는</span><br />태국 소도시 힐링</h1>
-          <p className="m-0 max-w-[600px] text-[17px] lg:text-[18px] leading-[1.65] text-slate">끝없는 블로그 검색에 지친 당신을 위해. 5단계 진단으로 평점 4.5+ 가성비 숙소, 혼자서도 안심되는 교통, 코끼리 탑승 없는 로컬 투어까지 한 번에 짜 드려요.</p>
+          <p className="m-0 max-w-[600px] text-[17px] lg:text-[18px] leading-[1.65] text-slate">여행 시기와 취향만 알려 주세요. 방콕·푸켓 다음, 조용한 소도시로 가는 동선과 교통, 검증된 숙소, 현지 투어를 한 번에 짜 드려요.</p>
           <div className="flex flex-col sm:flex-row gap-3"><Btn to="/plan" kind="lagoon" className="!min-h-14 text-[16px]">나만의 맞춤 일정 만들기 (5단계)</Btn><a href="#courses" onClick={(e) => { e.preventDefault(); document.getElementById('courses')?.scrollIntoView({ behavior: 'smooth' }); }} className="btn btn-line !min-h-14 text-[16px]"><Icon name="compass" size={18} />추천 코스 8선 둘러보기</a></div>
           <QuickMatch />
         </div>
