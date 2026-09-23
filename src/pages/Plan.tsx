@@ -55,11 +55,15 @@ export default function Plan() {
   const preset = rawPreset && courseById(rawPreset) ? rawPreset : undefined; // 잘못된 ?course= 값은 무시
   const qDays = Number(sp.get('days')); const qPace = sp.get('pace') as Intensity | null;
   const qInterests = (sp.get('interests') ?? '').split(',').filter((x): x is Interest => INTERESTS.some((i) => i.id === x));
+  const isISO = (v: string | null): v is string => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v);
+  const qStart = sp.get('start'), qEnd = sp.get('end'); const qMonth = Number(sp.get('month'));
   const [gen, setGen] = useState(-1);
   const [showPeriod, setShowPeriod] = useState(false);
   const [inp, setInp] = useState<PlanInputs>(() => ({
     ...DEFAULT_INPUTS, courseId: preset, start: addDays(todayISO(), 27), end: addDays(todayISO(), 36),
     ...(qDays >= 3 && qDays <= 21 ? { whenMode: 'month' as const, month: (new Date().getMonth() + 1) % 12 + 1, days: qDays } : {}),
+    ...(qMonth >= 1 && qMonth <= 12 ? { whenMode: 'month' as const, month: qMonth } : {}),
+    ...(isISO(qStart) && isISO(qEnd) && qStart <= qEnd ? { whenMode: 'dates' as const, start: qStart, end: qEnd } : {}),
     ...(qPace && PACES.some((p) => p.v === qPace) ? { intensity: qPace } : {}),
     ...(qInterests.length ? { interests: qInterests } : {}),
   }));

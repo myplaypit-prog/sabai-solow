@@ -15,27 +15,33 @@ import type { Trip } from '../lib/planner';
 import type { TourType } from '../data/types';
 import { Badge, Btn, Kicker, Photo, ExtLink } from '../components/ui';
 import { Icon } from '../components/Icon';
-import { FeatureCourse, SmallCourse } from '../components/CourseCards';
+import { BigCourse, TextCourse } from '../components/CourseCards';
 import { PeriodPanel } from '../components/PeriodPanel';
 import { Timeline, TipCards } from '../components/SeasonTips';
 import { TourBlocks } from '../components/TourSheet';
 
 export function Courses() {
+  const order = 'ECABDFGH'.split('').map((id) => COURSES.find((c) => c.id === id)!);
   return (
-    <main className="wrap gutter pt-8 lg:pt-14 pb-28 lg:pb-40 flex flex-col gap-10">
-      <div className="flex flex-col gap-3"><Kicker>8 routes</Kicker><h1 className="m-0 text-[40px] lg:text-[56px] leading-[1.05] font-extrabold tracking-[-0.03em]">추천 코스 <span className="serif-i text-lagoon">A—H</span></h1><p className="m-0 max-w-[620px] text-lg leading-relaxed">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요.</p></div>
-      <div className="grid lg:grid-cols-2 gap-10"><FeatureCourse c={COURSES[0]} accent="rgb(var(--chili-d))" /><FeatureCourse c={COURSES[5]} accent="rgb(var(--lagoon))" /></div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14">{COURSES.filter((c) => !'AF'.includes(c.id)).map((c) => <SmallCourse key={c.id} c={c} />)}</div>
-      <section className="flex flex-col gap-5"><h2 className="m-0 text-3xl lg:text-5xl font-extrabold tracking-[-0.03em]">추천 소도시 20</h2>
+    <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-16 flex flex-col gap-10 lg:gap-14">
+      <div className="flex flex-col gap-3"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">Sabai Solow 추천 코스 <span className="text-primary">8선</span></h1><p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-slate">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요. 숙소비는 임시 데이터 기준 어림값이에요.</p></div>
+      <div className="grid lg:grid-cols-12 gap-4 lg:gap-5">
+        {order.slice(0, 2).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 0} />)}
+        {order.slice(2, 4).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 1} />)}
+        {order.slice(4).map((c) => <TextCourse key={c.id} c={c} />)}
+      </div>
+      <section aria-labelledby="cities" className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">추천 소도시 20</h2></div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{CITIES.filter((c) => c.id !== 'bangkok').map((c) => (
-          <article key={c.id} className="card rounded-[24px] overflow-hidden flex flex-col"><div className="h-36"><Photo k={c.photo} /></div>
-            <div className="p-4 flex flex-col gap-1.5"><div className="flex justify-between items-baseline"><h3 className="m-0 text-xl font-extrabold">{c.name}</h3><span className="text-sm font-bold">혼행 {'●'.repeat(c.solo)}<span className="text-muted">{'○'.repeat(5 - c.solo)}</span><span className="sr-only">{c.solo}점</span></span></div>
-              <span className="text-[15px]">{c.summary}</span><span className="text-sm text-muted">{c.region} · 추천 {c.stay}</span></div></article>))}</div>
-        <p className="m-0 text-sm text-muted">혼행 적합도: 치안·대중교통·혼밥 환경·투어 참여 쉬움을 5점 만점으로 본 내부 초안 점수(현지 검수 필요).</p></section>
+          <article key={c.id} className="lift card rounded-3xl overflow-hidden flex flex-col"><div className="zoom h-40 overflow-hidden"><Photo k={c.photo} /></div>
+            <div className="p-4 lg:p-5 flex flex-col gap-2 flex-1"><div className="flex justify-between items-center gap-2"><h3 className="m-0 text-[19px] font-bold">{c.name}</h3><span className="px-2.5 py-1 rounded-full bg-mango-t text-mango-d text-[12px] font-bold inline-flex items-center gap-1 whitespace-nowrap"><Icon name="star" size={13} />혼행 {c.solo}.0</span></div>
+              <span className="text-[15px] leading-snug">{c.summary}</span><span className="text-[14px] text-slate leading-snug">{c.point}</span>
+              <span className="mt-auto pt-2 flex flex-wrap gap-1.5"><span className="px-2.5 py-1 rounded-full bg-oat text-[12px] font-semibold">{c.region}</span><span className="px-2.5 py-1 rounded-full bg-oat text-[12px] font-semibold">추천 {c.stay}</span>{c.mountainRoad && <span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[12px] font-semibold">산간 도로</span>}</span></div></article>))}</div>
+        <p className="m-0 text-sm text-muted">혼행 적합도: 치안·대중교통·혼밥 환경·투어 참여 쉬움을 5점 만점으로 본 내부 초안 점수(현지 검수 필요).</p>
+      </section>
     </main>
   );
 }
-
 export function Season() {
   const nav = useNavigate();
   const [mode, setMode] = useState<'dates' | 'tips'>('dates');
@@ -44,18 +50,18 @@ export function Season() {
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-7">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-5"><div className="flex flex-col gap-3"><Kicker>Season guide</Kicker><h1 className="m-0 text-[36px] lg:text-[48px] leading-[1.1] font-extrabold tracking-[-0.03em]">언제 가면 좋을까요?</h1></div>
-        <div role="tablist" aria-label="시기 입력 방식" className="flex p-1.5 rounded-full bg-sand gap-1 self-start">{(['dates', 'tips'] as const).map((m) => <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={`min-h-11 lg:min-h-12 px-5 rounded-full ${mode === m ? 'bg-night text-on-night font-extrabold' : 'font-bold'}`}>{m === 'dates' ? '기간 입력' : '시기 팁'}</button>)}</div></div>
+        <div role="tablist" aria-label="시기 입력 방식" className="flex p-1.5 rounded-full bg-oat gap-1 self-start">{(['dates', 'tips'] as const).map((m) => <button key={m} type="button" role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={`min-h-11 px-5 rounded-full text-[15px] ${mode === m ? 'bg-card text-primary font-bold shadow-soft' : 'font-semibold text-slate'}`}>{m === 'dates' ? '기간 입력' : '시기 팁'}</button>)}</div></div>
       {mode === 'dates' ? (
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-5 flex flex-col gap-4">
             <div className="flex flex-col gap-2"><label htmlFor="s-start" className="font-bold">출발일</label><div className="field"><Icon name="calendar" /><input id="s-start" type="date" value={start} onChange={(e) => setStart(e.target.value)} /><span className="text-muted pr-2">{weekday(start)}</span></div></div>
             <div className="flex flex-col gap-2"><label htmlFor="s-end" className="font-bold">귀국일</label><div className="field"><Icon name="calendar" /><input id="s-end" type="date" value={end} min={start} onChange={(e) => setEnd(e.target.value)} /><span className="text-muted pr-2">{weekday(end)}</span></div></div>
             {!ok && <p role="alert" className="m-0 font-bold text-chili-d">귀국일이 출발일보다 빨라요.</p>}
-            <Btn to="/plan">이 기간으로 계획하기</Btn>
+            <Btn to={ok ? `/plan?start=${start}&end=${end}` : '/plan'}>이 기간으로 계획하기</Btn>
           </div>
           <div className="lg:col-span-7">{ok && <PeriodPanel start={start} end={end} />}</div>
         </div>
-      ) : (<><Timeline /><TipCards onPick={() => nav('/plan')} /></>)}
+      ) : (<><Timeline /><TipCards onPick={(m) => nav(`/plan?month=${m}`)} /></>)}
     </main>
   );
 }

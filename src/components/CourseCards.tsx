@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Course } from '../data/types';
 import { Badge, Photo, seasonKind } from './ui';
+import { cheapestStay } from '../data/stays';
 import { Icon } from './Icon';
 import { cityById } from '../data/cities';
 import { regionSeason } from '../data/seasons';
@@ -14,46 +15,53 @@ export function courseSeason(c: Course, m = monthOf(todayISO())) {
   return { kind: seasonKind(worst.badge), text: `${m}월 ${worst.text.split(' · ')[0]} · ${worst.note.split(',')[0]}` };
 }
 
-export function FeatureCourse({ c, accent }: { c: Course; accent: string }) {
-  const s = courseSeason(c);
+
+/** 코스 요약 수치(임시 숙소 데이터 기준) */
+export function courseStats(c: Course) {
+  const stays = c.stops.filter((s) => s.nights > 0);
+  const nights = stays.reduce((a, s) => a + s.nights, 0);
+  const lodging = stays.reduce((a, s) => a + s.nights * (cheapestStay(s.city, 6)?.price ?? cheapestStay(s.city, 10)?.price ?? 0), 0);
+  const solo = stays.reduce((a, s) => a + cityById(s.city).solo, 0) / Math.max(1, stays.length);
+  return { nights, avg: nights ? Math.round(lodging / nights / 1000) / 10 : 0, solo: solo.toFixed(1) };
+}
+
+export function BigCourse({ c, wide }: { c: Course; wide?: boolean }) {
+  const s = courseSeason(c); const st = courseStats(c);
   return (
-    <article className="lift flex flex-col gap-5">
-      <Link to={`/plan?course=${c.id}`} className="zoom grain relative block h-[240px] lg:h-[440px] rounded-[22px] lg:rounded-[28px] overflow-hidden" aria-label={`${c.name} 코스로 계획 시작`}>
-        <Photo k={c.photo} /><span className="absolute left-3 bottom-3 lg:left-auto lg:bottom-auto lg:top-5 lg:right-5 z-[4]"><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
+    <article className={`lift card rounded-3xl overflow-hidden flex flex-col ${wide ? 'lg:col-span-7' : 'lg:col-span-5'}`}>
+      <Link to={`/plan?course=${c.id}`} className="zoom relative block h-[240px] lg:h-[300px] overflow-hidden" aria-label={`${c.name} 코스로 일정 시작`}>
+        <Photo k={c.photo} />
+        <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[rgba(15,22,40,.78)] to-transparent" aria-hidden="true" />
+        <span className="absolute left-4 top-4 flex gap-2 flex-wrap"><span className="px-3 py-1 rounded-full bg-card/95 text-[12px] font-bold text-primary">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></span>
+        <span className="absolute left-5 right-5 bottom-4 text-white flex flex-col gap-1"><span className="text-[12px] font-bold tracking-[.08em] uppercase opacity-90">{c.regions.join(' · ')}</span><span className="text-[22px] lg:text-[26px] font-extrabold tracking-[-0.02em] leading-tight">{c.name} ({c.days}일)</span><span className="text-[14px] opacity-90">{c.route}</span></span>
       </Link>
-      <div className="grid grid-cols-[64px_minmax(0,1fr)] lg:grid-cols-[120px_minmax(0,1fr)] gap-x-4 lg:gap-x-5 items-start">
-        <span className="serif-i text-[72px] lg:text-[96px] leading-[.78]" style={{ color: accent }}>{c.id}</span>
-        <div className="flex flex-col gap-2.5">
-          <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1"><h3 className="m-0 text-2xl lg:text-4xl font-extrabold tracking-[-0.035em]">{c.name}</h3><span className="text-base lg:text-lg font-bold">{c.days}일 · 도시 {stayCount(c)}곳</span></div>
-          <p className="m-0 text-base lg:text-lg leading-relaxed">{c.route}</p>
-          <p className="m-0 text-[15px] text-muted flex items-center gap-1.5"><Icon name="route" size={16} />{c.transport}</p>
+      <div className="p-5 lg:p-6 flex flex-col gap-4 flex-1">
+        <dl className="m-0 grid grid-cols-3 gap-3">
+          {[['추천 일정', `${st.nights}박 ${st.nights + 1}일`], ['1박 평균 숙소비', st.avg ? `약 ${st.avg}만원` : '—'], ['혼행 적합도', `${st.solo} / 5`]].map(([a, b]) => <div key={a} className="flex flex-col gap-0.5"><dt className="text-[12px] font-semibold text-slate">{a}</dt><dd className="m-0 text-[18px] font-bold">{b}</dd></div>)}
+        </dl>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3 border-t rule">
+          <span className="text-[14px] text-slate flex items-center gap-1.5"><Icon name="route" size={16} />{c.transport}</span>
+          <Link to={`/plan?course=${c.id}`} className="btn btn-primary !min-h-11 !px-5 text-[14px]">이 코스로 일정 시작 <Icon name="chev" size={16} sw={2.4} /></Link>
         </div>
       </div>
     </article>
   );
 }
 
-export function SmallCourse({ c }: { c: Course }) {
-  const s = courseSeason(c);
+export function TextCourse({ c }: { c: Course }) {
+  const s = courseSeason(c); const st = courseStats(c);
+  const hl = c.stops.filter((x) => x.nights > 0).slice(0, 3).map((x) => `${cityById(x.city).name} ${cityById(x.city).highlights[0] ?? ''}`.trim());
   return (
-    <article className="lift flex flex-col gap-4">
-      <Link to={`/plan?course=${c.id}`} className="zoom grain block h-[200px] lg:h-[260px] rounded-3xl overflow-hidden" aria-label={`${c.name} 코스로 계획 시작`}><Photo k={c.photo} /></Link>
-      <div className="flex items-baseline gap-3.5 border-b-[1.5px] rule pb-3">
-        <span className="serif-i text-[56px] leading-[.8] text-lagoon">{c.id}</span><h3 className="m-0 text-[22px] lg:text-[26px] font-extrabold tracking-[-0.03em] flex-1">{c.name}</h3><span className="text-base font-bold whitespace-nowrap">{c.days}일 · {stayCount(c)}곳</span>
+    <article className="lift card rounded-3xl p-5 lg:p-6 flex flex-col gap-3 lg:col-span-6">
+      <div className="flex flex-wrap items-center gap-2"><span className="px-3 py-1 rounded-full bg-saffron-t text-alert-d text-[12px] font-bold">추천 코스 {c.id}</span><Badge kind={s.kind} size="sm">{s.text}</Badge></div>
+      <h3 className="m-0 text-[20px] lg:text-[22px] font-bold tracking-[-0.015em]">{c.name} ({c.days}일)</h3>
+      <p className="m-0 text-[15px] leading-relaxed text-slate">{c.route} · {c.transport}</p>
+      <ul className="m-0 p-0 list-none flex flex-wrap gap-2">{hl.map((h) => <li key={h} className="px-3 py-1.5 rounded-full bg-linen line text-[13px] font-semibold">{h}</li>)}</ul>
+      <div className="mt-auto pt-3 flex flex-wrap items-center justify-between gap-3 border-t rule text-[14px]">
+        <span className="text-slate">1박 평균 {st.avg ? `약 ${st.avg}만원` : '—'} · 도시 {stayCount(c)}곳</span>
+        <Link to={`/plan?course=${c.id}`} className="btn bg-night text-on-night !min-h-11 !px-5 text-[14px]">이 코스로 시작</Link>
       </div>
-      <p className="m-0 text-base leading-relaxed">{c.route}</p>
-      <span className="text-[15px] text-muted">{c.transport}</span>
-      <div><Badge kind={s.kind}>{s.text}</Badge></div>
     </article>
   );
 }
 
-export function CourseRow({ c }: { c: Course }) {
-  return (
-    <Link to={`/plan?course=${c.id}`} className="grid grid-cols-[88px_minmax(0,1fr)_20px] gap-3.5 items-center py-3 border-t-[1.5px] rule">
-      <span className="h-[72px] rounded-[14px] overflow-hidden block"><Photo k={c.photo} /></span>
-      <span className="flex flex-col gap-1"><span className="text-lg font-extrabold"><span className="serif-i text-2xl text-lagoon mr-1.5">{c.id}</span>{c.name}</span><span className="text-[15px] text-muted">{c.days}일 · 도시 {stayCount(c)}곳</span></span>
-      <Icon name="chev" />
-    </Link>
-  );
-}
