@@ -37,20 +37,25 @@ src/
   components/  Layout(내비·하단 탭·푸터), PeriodPanel, SeasonTips, TripMap, TourSheet, ui(Badge·Photo·Logo·Btn)
   pages/       Home, Plan, Trip, Auth, Misc(코스·시기·안심 팩·내 일정·인쇄·출처)
   styles/      index.css — 디자인 토큰(라이트/다크), Pretendard
+docs/          기획안·설계 문서, design/(Stitch 디자인 시스템·시안 이미지)
 public/photos  실사 사진 35장(Unsplash 라이선스, 출처는 src/data/photo-meta.json)
 ```
 
-## 디자인 토큰 — Golden Hour Editorial
+## 디자인 — Google Stitch 디자인 시스템
+
+화면은 Google Stitch 시안([docs/design/](docs/design/): `DESIGN.md`, `stitch-home.png`, `stitch-plan.png`)을 기준으로 만들었어요. 에디토리얼 벤토 레이아웃, 따뜻한 리넨 바탕, 머리카락 테두리 + 햇살 그림자 카드, 모바일 떠 있는 하단 탭이 특징이에요.
 
 | 토큰 | 값 | 쓰임 |
 |---|---|---|
-| cloud | #F7F3EA | 바탕 |
-| tamarind(ink) | #2A1B14 | 글자·어두운 섹션 |
-| lagoon | #0E6E68 | 주 버튼·링크 (cloud 위 5.5:1) |
-| chili / chili deep | #E2572A / #C23C17 | 로고 w·스티커 면 / 강조 글자 |
-| butter · hibiscus · pistachio · mint | #F8D66A · #F5A8B8 · #CADFA2 · #D3EBE3 | 면 전용(위 글자는 tamarind) |
+| linen · oat · card | #FAF7F2 · #F4EFE6 · #FFFFFF | 바탕 · 보조 면 · 카드 |
+| marine | #1B2A4A | 글자·어두운 띠(`night`) |
+| slate | #53637F | 보조 글자 (linen 위 5.7:1) |
+| primary | #B8431C | 주 버튼·링크 (흰 글자 5.4:1) |
+| saffron | #E05A2B | 로고 w·장식·큰 글자 전용 (작은 글자 금지, 3.7:1) |
+| sage · mango · sky · alert | #2A7258 · #F5B738 · #243B6B · #B23814 | 안심·추천 / 축제·주의 / 알뜰 / 금주일 — 배지는 `*-t` 면 + `*-d` 글자 |
+| hair | #E8DFD3 | 테두리 |
 
-글꼴: 한글 Pretendard(제목 800), 포인트 Instrument Serif Italic, 로고 Bricolage Grotesque. 색·글꼴 값은 `tailwind.config.js`와 `src/styles/index.css`에서 함께 바꿉니다.
+글꼴: 라틴·숫자 Plus Jakarta Sans, 한글 Pretendard(제목 800), 로고 워드마크만 Bricolage Grotesque(`Sabai Solo`+`w`만 saffron). 색은 `tailwind.config.js`와 `src/styles/index.css`에서 라이트/다크를 함께 바꿉니다. 예전 이름(`lagoon`·`ink`·`cloud`…)은 새 토큰의 별칭으로 남겨 두었어요.
 
 ## 규칙 엔진 요약 (`src/lib/planner.ts`)
 
