@@ -8,4 +8,5 @@
 - 모르는 값: 프로토타입에서는 화면 확인용 **임시값**을 넣고 `(임시)`·`(샘플)`을 붙이거나 `sample: true`로 표시. 실제 업체·숙소 이름은 쓰지 않음. 확인된 값으로 바꿀 때 표시를 뗄 것.
 - 데이터는 `src/data/*`, 규칙은 `src/lib/planner.ts`. 규칙을 바꾸면 `npm test`를 통과시킬 것.
 - 사진은 `public/photos`에 넣고 `src/data/photo-meta.json`·`PHOTO_ALT`에 출처·대체텍스트를 함께 기록.
-- 커밋 메시지: `feat:` `fix:` `docs:` `refactor:` 접두어 + 한국어 설명.
+- 기획·설계 문서는 `docs/`(기획안.md·설계.md). 화면·규칙을 바꾸면 문서와 어긋나지 않는지 확인.
+- 커밋 메시지: `feat:` `fix:` `docs:` `refactor:` `chore:` 접두어 + 한국어 설명. 작업 단위마다 커밋하고 `origin main`에 푸시.

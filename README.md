@@ -3,6 +3,8 @@
 30~50대 혼자 여행자를 위한 태국 소도시 힐링 여행 플래너입니다. 여행 시기·취향을 넣으면 동선, 교통, 숙소 기준(구글맵 평점 4.5+ · 1박 10만원 이하), 현지 투어를 한 번에 짜 줍니다.
 외부 가입·API 없이 브라우저 안에서만 동작하는 **프로토타입**입니다.
 
+기획·설계 문서: [docs/기획안.md](docs/기획안.md) · [docs/설계.md](docs/설계.md)
+
 ## 바로 실행하기
 
 ```bash
@@ -73,7 +75,5 @@ public/photos  실사 사진 35장(Unsplash 라이선스, 출처는 src/data/pho
 git log --oneline            # 지금까지의 커밋 보기
 git switch -c feature/내작업   # 새 브랜치에서 작업
 git add -A && git commit -m "fix: 무엇을 바꿨는지"
-# GitHub에 올리려면(처음 한 번)
-git remote add origin https://github.com/<계정>/sabai-solow.git
-git push -u origin main
+git push                     # 원격: https://github.com/myplaypit-prog/sabai-solow
 ```
