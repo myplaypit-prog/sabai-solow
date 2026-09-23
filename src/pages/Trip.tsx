@@ -8,6 +8,7 @@ import { tourById, TOURS } from '../data/tours';
 import { STAYS, BAND_LABEL, mapsSearch, stayById, stayName, cheapestStay } from '../data/stays';
 import { regionSeason } from '../data/seasons';
 import { prepareOffline } from '../lib/offline';
+import { decodeShare, shareUrl } from '../lib/share';
 import { BOOKING } from '../data/legs';
 import { fmtDot, weekday, fmtMD, addDays } from '../lib/dates';
 import { Badge, Kicker, Photo, ExtLink, seasonKind } from '../components/ui';
@@ -147,6 +148,8 @@ function Transport({ trip, legKey, safe }: { trip: TripT; legKey?: string; safe:
 
 export default function Trip() {
   const { id } = useParams(); const nav = useNavigate(); const [sp, setSp] = useSearchParams();
+  const shared = !id; // /shared?d=… : 공유받은 일정(이 기기에 저장 전)
+  const sd = sp.get('d');
   const { user, ready, toast, online } = useApp();
   const [trip, setTrip] = useState<TripT | null | undefined>(undefined);
   const [tour, setTour] = useState<TourType | null>(null);
@@ -157,15 +160,25 @@ export default function Trip() {
   const [mapFocus, setMapFocus] = useState<string>();
   const [periodOpen, setPeriodOpen] = useState(false);
   const tab = (TABS.includes(sp.get('tab') as Tab) ? sp.get('tab') : '일자별') as Tab;
-  const setTab = (t: Tab) => setSp(t === '일자별' ? {} : { tab: t }, { replace: true });
+  const setTab = (t: Tab) => setSp({ ...(sd ? { d: sd } : {}), ...(t === '일자별' ? {} : { tab: t }) }, { replace: true });
 
-  useEffect(() => { if (!id) return; getTrip(id).then((t) => { setTrip(t); if (t) setStayCity(t.cityIds.find((c) => c !== 'bangkok') ?? ''); }); }, [id]);
-  useEffect(() => { if (ready && !user) nav('/login', { replace: true, state: { next: `/trip/${id}` } }); }, [ready, user, nav, id]);
+  useEffect(() => {
+    const pick = (t: TripT | null) => { setTrip(t); if (t) setStayCity(t.cityIds.find((c) => c !== 'bangkok') ?? ''); };
+    if (id) getTrip(id).then(pick); else pick(decodeShare(sd));
+  }, [id, sd]);
+  // 공유받은 일정은 로그인 없이 볼 수 있어요
+  useEffect(() => { if (!shared && ready && !user) nav('/login', { replace: true, state: { next: `/trip/${id}` } }); }, [shared, ready, user, nav, id]);
   const stops = useMemo(() => (trip ? stopsOf(trip) : []), [trip]);
   if (trip === undefined) return <main className="wrap gutter py-24 text-center text-lg font-bold" aria-busy="true">일정을 불러오는 중…</main>;
-  if (trip === null) return <main className="wrap gutter py-24 flex flex-col items-center gap-4 text-center"><h1 className="m-0 text-3xl font-extrabold">일정을 찾을 수 없어요</h1><p className="m-0">이 기기에 저장된 일정만 볼 수 있어요.</p><Link to="/plan" className="btn btn-lagoon">새 일정 만들기</Link></main>;
+  if (trip === null) return <main className="wrap gutter py-24 flex flex-col items-center gap-4 text-center"><h1 className="m-0 text-3xl font-extrabold">일정을 찾을 수 없어요</h1><p className="m-0">{shared ? '공유 링크가 잘렸거나 지원하지 않는 형식이에요. 링크를 다시 받아 주세요.' : '이 기기에 저장된 일정만 볼 수 있어요. 다른 기기의 일정은 그 기기에서 링크 공유를 눌러 보내 주세요.'}</p><Link to="/plan" className="btn btn-lagoon">새 일정 만들기</Link></main>;
 
-  const save = async (t: TripT, msg?: string) => { setTrip(t); await putTrip(t); if (msg) toast(msg); };
+  // 공유받은 일정은 화면에서만 바뀌고, '내 일정에 저장'을 눌러야 이 기기에 저장돼요
+  const save = async (t: TripT, msg?: string) => { setTrip(t); if (!shared) await putTrip(t); if (msg) toast(msg); };
+  const keep = async () => {
+    if (!user) { nav('/login', { state: { next: `/shared?d=${sd}` } }); return; }
+    const mine = { ...trip, id: Math.random().toString(36).slice(2, 10), userId: user.id, createdAt: new Date().toISOString(), offline: false };
+    await putTrip(mine); toast('내 일정에 저장했어요'); nav(`/trip/${mine.id}`, { replace: true });
+  };
   const ack = (k: string) => save({ ...trip, notes: { ...trip.notes, [`ack:${k}`]: '1' } });
   const compare = (l: PlannedLeg) => { setLegKey(`${l.from}-${l.to}`); setTab('교통'); window.scrollTo({ top: 0 }); };
   const apply = (st: CourseStop[]) => {
@@ -176,7 +189,11 @@ export default function Trip() {
     setUndo(trip); setEdit(false);
     save({ ...nt, id: trip.id, createdAt: trip.createdAt, notes: trip.notes, offline: trip.offline }, '규칙에 맞춰 다시 계산했어요');
   };
-  const copyLink = async () => { try { await navigator.clipboard.writeText(location.href); toast('링크를 복사했어요'); } catch { toast('복사할 수 없어요. 주소창의 링크를 직접 복사해 주세요.'); } };
+  const copyLink = async () => {
+    const url = shareUrl(trip);
+    if (navigator.share) { try { await navigator.share({ title: `${trip.name} · Sabai Solow`, text: `${trip.nights}박 ${trip.days.length}일 태국 소도시 일정`, url }); return; } catch (e) { if ((e as Error).name === 'AbortError') return; } }
+    try { await navigator.clipboard.writeText(url); toast('공유 링크를 복사했어요 · 받는 사람도 바로 열 수 있어요'); } catch { toast('복사할 수 없어요. 잠시 뒤 다시 눌러 주세요.'); }
+  };
   const offline = async () => {
     toast('오프라인용 파일을 받는 중이에요…');
     const r = await prepareOffline(trip);
@@ -193,20 +210,24 @@ export default function Trip() {
   // 예상 숙박비: 고른 숙소 가격, 안 고른 도시는 예산 안 최저가(임시 데이터 기준 어림)
   const lodging = trip.days.filter((d) => d.stay).reduce((a, d) => a + (stayById(trip.notes?.[`stay:${d.city}`])?.price ?? cheapestStay(d.city, trip.inputs.budget)?.price ?? 0), 0);
   const cities = trip.cityIds.filter((c) => c !== 'bangkok');
-  const actions = [
+  const actions = shared ? [
+    { i: 'save', t: '내 일정에 저장', s: '내 일정에 저장', f: keep },
+    { i: 'link', t: '링크 공유', s: '공유', f: copyLink },
+  ] : [
     { i: 'save', t: '일정 저장', s: '저장', f: () => save(trip, '일정을 저장했어요') },
     { i: 'download', t: 'PDF', s: 'PDF', f: () => nav(`/trip/${trip.id}/print`) },
     { i: 'offline', t: trip.offline ? '오프라인 저장됨' : '오프라인에 저장', s: trip.offline ? '저장됨' : '오프라인', f: offline },
-    { i: 'link', t: '링크 복사', s: '링크 복사', f: copyLink },
+    { i: 'link', t: '링크 공유', s: '공유', f: copyLink },
   ];
 
   return (
     <main className="pb-28 lg:pb-[120px]">
       <section className="wrap gutter pt-5 lg:pt-10 flex flex-col gap-4 lg:gap-6">
+        {shared && <div role="status" className="rounded-2xl bg-sky-t text-sky-d px-4 py-3 flex items-center gap-3 no-print"><Icon name="link" size={20} /><span className="flex-1 text-[15px] font-bold">공유받은 일정이에요. 둘러보고 마음에 들면 내 일정에 저장해 고칠 수 있어요.</span></div>}
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 lg:gap-8">
           <div className="flex flex-col gap-3"><div className="flex gap-2 flex-wrap"><Badge kind={seasonKind(headSeason.badge)}>{trip.month}월 · {headSeason.text}</Badge>{trip.inputs.safe && <Badge kind="safe">안심 일정 ON</Badge>}{trip.offline && <Badge kind="rec">오프라인 저장됨</Badge>}</div>
             <h1 className="m-0 text-[34px] lg:text-[44px] leading-[1.15] font-extrabold tracking-[-0.03em]">{trip.name} <span className="serif-i text-lagoon">my trip</span></h1></div>
-          <div className="grid grid-cols-4 lg:flex gap-2 lg:gap-2.5 no-print">{actions.map((a, k) => (
+          <div className={`grid ${shared ? 'grid-cols-2' : 'grid-cols-4'} lg:flex gap-2 lg:gap-2.5 no-print`}>{actions.map((a, k) => (
             <button key={a.i} type="button" onClick={a.f} className={`min-h-16 lg:min-h-[52px] rounded-2xl lg:rounded-full lg:px-5 flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 text-xs lg:text-base font-extrabold line ${k === 0 ? 'bg-lagoon text-on-lagoon shadow-none' : 'bg-paper'}`}><Icon name={a.i} size={20} /><span className="lg:hidden">{a.s}</span><span className="hidden lg:inline">{a.t}</span></button>))}</div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 rounded-[22px] card overflow-hidden">

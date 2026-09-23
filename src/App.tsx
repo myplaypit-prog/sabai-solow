@@ -25,7 +25,7 @@ const NotFound = lazy(() => misc().then((m) => ({ default: m.NotFound })));
 const TITLES: Record<string, string> = {
   '/': '혼자 누리는 태국 소도시 쉼표 여행', '/plan': '맞춤 일정 플래너', '/season': '시기 가이드', '/courses': '추천 코스 8선',
   '/safety': '혼행 안심 팩', '/my': '내 일정', '/credits': '사진 출처', '/login': '로그인', '/signup': '회원가입',
-  '/verify': '이메일 인증', '/reset-password': '비밀번호 재설정',
+  '/verify': '이메일 인증', '/reset-password': '비밀번호 재설정', '/shared': '공유받은 일정',
 };
 /** 화면마다 탭 제목을 달아 탭 구분·화면 읽기 프로그램이 알아듣게 해요 */
 function TitleSync() {
@@ -56,6 +56,7 @@ export default function App() {
           </Route>
           <Route element={<Shell footer={false} />}>
             <Route path="/trip/:id" element={<Trip />} />
+            <Route path="/shared" element={<Trip />} />
           </Route>
           <Route element={<Shell footer={false} tabbar={false} />}>
             <Route path="/plan" element={<Plan />} />
