@@ -5,7 +5,8 @@
 - 색은 반드시 토큰으로: 새 이름(`bg-primary`, `text-marine`, `bg-sage-t text-sage` …) 또는 `rgb(var(--token))`. 예전 이름(lagoon·ink·cloud…)은 별칭이라 새 코드에선 쓰지 않음. 새 색은 `src/styles/index.css`의 `:root`와 다크 블록 두 곳에 함께 추가.
 - 작은 글자는 marine·slate·primary·`*-d`만. saffron은 로고 w·장식·큰 글자 전용. mango·`*-t`는 면으로만 쓰고 그 위 글자는 marine 또는 짝이 되는 `*-d`.
 - 어두운 면은 `bg-night text-on-night`(다크 모드에서도 어두움). `bg-marine`에 흰 글자를 올리지 말 것(다크 모드에서 marine은 밝은 글자색).
-- 로고는 텍스트 워드마크 유지(`Logo`): `Sabai Solo` + saffron `w`.
+- 로고는 Stitch 로고를 옮긴 `Logo`(S 마크 + Quicksand 워드마크 + 잎 달린 saffron `w`)만 쓸 것. 파비콘은 `public/icon.svg`(같은 S 마크).
+- 이미지: Stitch가 준 이미지가 있으면 그것을, 없으면 `public/photos`의 기존 실사 사진을 씀.
 - 접근성: 터치 영역 44px 이상(`min-h-11`), 본문 16px 이상, 배지는 색+글자+아이콘, 폼은 label 연결.
 - 문구: 짧은 존댓말("~해요"), 경고는 담담하게, 느낌표·과장 금지.
 - 모르는 값: 프로토타입에서는 화면 확인용 **임시값**을 넣고 `(임시)`·`(샘플)`을 붙이거나 `sample: true`로 표시. 실제 업체·숙소 이름은 쓰지 않음. 확인된 값으로 바꿀 때 표시를 뗄 것.

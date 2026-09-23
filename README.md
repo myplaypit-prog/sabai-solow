@@ -55,7 +55,7 @@ public/photos  실사 사진 35장(Unsplash 라이선스, 출처는 src/data/pho
 | sage · mango · sky · alert | #2A7258 · #F5B738 · #243B6B · #B23814 | 안심·추천 / 축제·주의 / 알뜰 / 금주일 — 배지는 `*-t` 면 + `*-d` 글자 |
 | hair | #E8DFD3 | 테두리 |
 
-글꼴: 라틴·숫자 Plus Jakarta Sans, 한글 Pretendard(제목 800), 로고 워드마크만 Bricolage Grotesque(`Sabai Solo`+`w`만 saffron). 색은 `tailwind.config.js`와 `src/styles/index.css`에서 라이트/다크를 함께 바꿉니다. 예전 이름(`lagoon`·`ink`·`cloud`…)은 새 토큰의 별칭으로 남겨 두었어요.
+글꼴: 라틴·숫자 Plus Jakarta Sans, 한글 Pretendard(제목 800), 로고는 Stitch 로고(둥근 사각 S 마크 + Quicksand 워드마크, 잎이 돋은 saffron `w`, 부제 peaceful + lively solo travels)를 SVG로 옮긴 `Logo`·`LogoMark`(`src/components/ui.tsx`). 색은 `tailwind.config.js`와 `src/styles/index.css`에서 라이트/다크를 함께 바꿉니다. 예전 이름(`lagoon`·`ink`·`cloud`…)은 새 토큰의 별칭으로 남겨 두었어요.
 
 ## 규칙 엔진 요약 (`src/lib/planner.ts`)
 
