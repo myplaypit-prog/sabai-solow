@@ -64,11 +64,12 @@ function QuickMatch() {
   );
 }
 
+// 4대 안심 프로토콜: 문구는 서비스가 실제로 하는 일(규칙·데이터)만 적어요. 수치는 규칙에서 나오는 값만.
 const PILLARS = [
-  { k: 'STAY 01', i: 'star', t: '평점 4.5+ & 1박 10만원 이하 숙소', d: '구글맵 평점 4.5 이상, 1인 1실 기준 1박 10만원 이하만 보여 드려요. 1인 요금·24시간 리셉션·늦은 체크인 같은 혼행 태그를 함께 붙여요.', c: ['구글 평점 4.5 이상', '구글맵 최저가로 연결'] },
-  { k: 'MOBILITY 02', i: 'train', t: '21시 전 도착 & 여성 전용칸 우선', d: '안심 일정을 켜면 늦은 도착편·야간버스를 빼고, 방콕–치앙마이 9/10호처럼 여성·유아 전용 침대칸이 있는 열차를 먼저 골라요.', c: ['하루 이동 5시간 이하', '야간버스 제외'] },
-  { k: 'LOCAL 03', i: 'spark', t: '코끼리 탑승 없는 투어만', d: '코끼리 목욕·먹이 주기는 탑승·쇼가 없는 보호소만 소개해요. 쿠킹클래스·트레킹은 소규모·숙소 픽업 포함을 먼저 보여 드려요.', c: ['탑승·쇼 제외', '소규모 투어 우선'] },
-  { k: 'ASSIST 04', i: 'phone', t: '태국어 목적지 카드 & 1155', d: '숙소·터미널 주소를 태국어 카드로 크게 보여 주고, 관광경찰 1155와 대사관 번호를 모아 뒀어요. 일정은 오프라인으로도 저장돼요.', c: ['오프라인 저장', '비상 연락처'] },
+  { n: '01', i: 'bed', tone: 'bg-saffron-t text-primary', kt: 'text-primary', t: '엄선 안심 숙소', d: '구글 평점 4.5+ 검증, 24시간 리셉션·1인 요금 숙소 우선, 1박 10만원 이하의 청결하고 조용한 소도시 로컬 스테이만 골라요.', sl: '숙소 평점 기준', sv: '4.5 이상', sc: 'text-sage' },
+  { n: '02', i: 'bus', tone: 'bg-sky-t text-sky-d', kt: 'text-sky-d', t: '스마트 안전 교통', d: '야간 이동을 원하는 경우 외에는 21시 전 체크인 도착을 원칙으로 하고, 국철 여성 전용 침대칸과 정찰제 미니밴 노선을 먼저 배정해요.', sl: '야간 이동', sv: '원할 때만', sc: 'text-sky-d' },
+  { n: '03', i: 'spark', tone: 'bg-sage-t text-sage', kt: 'text-sage', t: '윤리적 로컬 임팩트', d: '상업적 코끼리 탑승과 쇼는 전면 배제하고, 목욕·관찰 중심의 윤리적 보호소와 쿠킹클래스·트레킹 같은 소규모 로컬 체험을 연결해요.', sl: '탑승·쇼 투어', sv: '소개 안 함', sc: 'text-sage' },
+  { n: '04', i: 'phone', tone: 'bg-saffron-t text-primary', kt: 'text-primary', t: '1초 태국어 카드', d: '기사님께 화면만 보여 주면 되는 큰 글씨 태국어 목적지 카드와 관광경찰 1155·대사관 비상 연락처를 바로 열 수 있어요.', sl: '오프라인 사용', sv: '데이터 없이 가능', sc: 'text-marine' },
 ];
 
 const REGION_TABS: { l: string; r: Region[] | null }[] = [{ l: '전체 보기', r: null }, { l: '북부 산간', r: ['북부'] }, { l: '이산 메콩강', r: ['동북부'] }, { l: '남부 정글·섬', r: ['안다만', '걸프', '동부'] }];
@@ -148,20 +149,23 @@ export default function Home() {
         </figure>
       </section>
 
-      {/* 4대 안심 원칙 */}
+      {/* 4대 안심 프로토콜 */}
       <section aria-labelledby="pillars" className="wrap gutter pt-14 lg:pt-20">
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-3 mb-6 lg:mb-8">
-          <div className="flex flex-col gap-2"><span className="kicker">Sabai Solow safety &amp; comfort</span><h2 id="pillars" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">30~50대 혼행자를 위한 4대 안심 원칙</h2><p className="m-0 text-[16px] text-slate">외로움은 줄이고, 안전은 챙기고, 나만의 호젓함은 지키는 방식이에요.</p></div>
-          <span className="inline-flex items-center gap-2 px-3.5 min-h-10 rounded-full bg-sage-t text-sage text-[14px] font-bold self-start lg:self-auto"><Icon name="shield" size={16} />외교부 여행경보 2단계 이상 지역은 추천에서 제외</span>
+        <div className="grid lg:grid-cols-12 gap-4 lg:gap-8 lg:items-end mb-6 lg:mb-8">
+          <div className="lg:col-span-7 flex flex-col gap-3">
+            <span className="kicker flex items-center gap-2"><Icon name="shield" size={16} />Sabai Solow 4-fold safety charter</span>
+            <h2 id="pillars" className="m-0 text-[28px] lg:text-[40px] leading-[1.25] font-extrabold tracking-[-0.02em]">혼자 여행하는 이들을 지키는 4대 안심 프로토콜</h2>
+          </div>
+          <p className="lg:col-span-5 m-0 text-[16px] leading-relaxed text-slate">혼자 걷는 자유는 지키고 불안은 덜어내요. 외교부 여행경보 지역은 빼고, 숙소·교통·투어마다 혼행 기준을 걸어 둔 깐깐한 원칙이에요.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {PILLARS.map((p) => (
-            <article key={p.k} className="lift card rounded-3xl p-5 lg:p-6 flex flex-col gap-3">
-              <span className="w-11 h-11 rounded-xl bg-saffron-t text-primary grid place-items-center"><Icon name={p.i} size={22} /></span>
-              <span className="text-[12px] font-bold tracking-[.08em] text-primary">{p.k}</span>
-              <h3 className="m-0 text-[18px] font-bold leading-snug">{p.t}</h3>
-              <p className="m-0 text-[15px] leading-relaxed text-slate flex-1">{p.d}</p>
-              <ul className="m-0 p-0 list-none flex flex-wrap gap-1.5 pt-2 border-t rule">{p.c.map((x) => <li key={x} className="text-[13px] font-semibold px-2.5 py-1 rounded-full bg-oat">{x}</li>)}</ul>
+            <article key={p.n} className="lift card rounded-3xl p-5 lg:p-6 flex flex-col gap-3">
+              <span className={`w-12 h-12 rounded-2xl grid place-items-center ${p.tone}`}><Icon name={p.i} size={24} /></span>
+              <span className={`mt-3 text-[13px] font-bold tracking-[.06em] ${p.kt}`}>PROTOCOL {p.n}</span>
+              <h3 className="m-0 text-[21px] font-extrabold leading-snug tracking-[-0.01em]">{p.t}</h3>
+              <p className="m-0 text-[16px] leading-relaxed text-slate flex-1">{p.d}</p>
+              <p className="m-0 mt-2 rounded-2xl bg-oat px-4 py-3 flex items-center justify-between gap-3 text-[14px]"><span className="font-semibold">{p.sl}</span><b className={`font-extrabold ${p.sc}`}>{p.sv}</b></p>
             </article>
           ))}
         </div>
