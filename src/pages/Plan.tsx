@@ -33,9 +33,9 @@ const GEN_STEPS = ['도시 고르는 중', '이동 경로 맞추는 중', '숙�
 
 function StepCard({ n, title, id, children, aside }: { n: string; title: string; id: string; children: ReactNode; aside?: string }) {
   return (
-    <section aria-labelledby={id} className="card rounded-3xl p-5 lg:p-8 flex flex-col gap-5">
+    <section aria-labelledby={id} className="card rounded-3xl p-5 lg:p-8 flex flex-col gap-5 scroll-mt-28">
       <div className="flex items-center justify-between gap-3">
-        <h2 id={id} className="m-0 flex items-center gap-3 text-[20px] lg:text-[24px] font-bold tracking-[-0.015em]"><span className="min-w-9 h-9 px-2 rounded-full bg-saffron-t text-primary grid place-items-center text-[14px] font-bold">{n}</span>{title}</h2>
+        <h2 id={id} tabIndex={-1} className="m-0 outline-none flex items-center gap-3 text-[20px] lg:text-[24px] font-bold tracking-[-0.015em]"><span className="min-w-9 h-9 px-2 rounded-full bg-saffron-t text-primary grid place-items-center text-[14px] font-bold">{n}</span>{title}</h2>
         {aside && <span className="px-3 py-1 rounded-full bg-oat text-[12px] font-bold text-slate whitespace-nowrap">{aside}</span>}
       </div>
       {children}
@@ -106,8 +106,11 @@ export default function Plan() {
   const draft = useMemo(() => (whenOk ? planTrip(inp, 'preview') : null), [inp, whenOk]);
   const period = useMemo(() => (inp.whenMode === 'dates' && inp.start && inp.end && !dateErr ? periodInfo({ start: inp.start, end: inp.end }) : inp.whenMode === 'month' && inp.month ? periodInfo({ month: inp.month }) : null), [inp.whenMode, inp.start, inp.end, inp.month, dateErr]);
 
+  /** 진행 표시나 막힌 버튼에서 해당 단계로 바로 이동해요 */
+  const goStep = (id: string) => { const h = document.getElementById(id); h?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); h?.focus({ preventScroll: true }); };
   const make = async () => {
-    if (!user || !canMake) return;
+    if (!canMake) { toast(!whenOk ? '1단계 여행 시기를 먼저 정해 주세요' : '관심사를 하나 이상 골라 주세요'); goStep(!whenOk ? 's1' : 's3'); return; }
+    if (!user) return;
     setGen(0);
     const t0 = Date.now();
     const trip = planTrip(inp, user.id);
@@ -162,10 +165,10 @@ export default function Plan() {
       <div className="wrap gutter mt-6 lg:mt-8">
         <ol aria-label="진단 5단계" className="card rounded-3xl p-3 lg:p-4 m-0 list-none grid grid-cols-5 gap-1 lg:gap-3">
           {TRACK.map((x, i) => (
-            <li key={x.t} className="flex flex-col lg:flex-row items-center lg:items-center gap-1.5 lg:gap-3 text-center lg:text-left min-w-0">
+            <li key={x.t} className="min-w-0"><button type="button" onClick={() => goStep(['s1', 's2', 's3', 's3', 's5'][i])} className="w-full min-h-11 rounded-2xl hover:bg-oat flex flex-col lg:flex-row items-center lg:items-center gap-1.5 lg:gap-3 text-center lg:text-left min-w-0 p-1">
               <span className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full grid place-items-center text-[14px] font-bold shrink-0 ${x.ok ? (i === 4 && inp.safe ? 'bg-sage text-white' : 'bg-primary text-on-primary') : 'bg-oat text-slate'}`}>{x.ok ? <Icon name="check" size={18} sw={2.6} /> : i + 1}</span>
               <span className="flex flex-col min-w-0"><span className="text-[12px] lg:text-[14px] font-bold truncate">{i + 1}. {x.t}</span><span className={`hidden sm:block text-[12px] lg:text-[13px] truncate ${x.ok ? 'text-primary' : 'text-slate'}`}>{x.s}</span></span>
-            </li>
+            </button></li>
           ))}
         </ol>
       </div>
@@ -257,7 +260,7 @@ export default function Plan() {
           {inp.courseId && <Link to="/plan" onClick={() => set({ courseId: undefined })} className="-mt-2 self-start min-h-11 inline-flex items-center text-[14px] font-bold text-primary underline">조건에 맞게 자동으로 고르기</Link>}
 
           <section aria-labelledby="s5" className="card rounded-3xl p-5 lg:p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-3"><h2 id="s5" className="m-0 flex items-center gap-3 text-[20px] font-bold"><span className="w-9 h-9 rounded-full bg-sage-t text-sage grid place-items-center text-[14px] font-bold">05</span><label htmlFor="safe">혼행 안심 옵션 팩</label></h2><Toggle id="safe" on={inp.safe} onChange={(v) => set({ safe: v })} label="안심 일정" /></div>
+            <div className="flex items-center justify-between gap-3"><h2 id="s5" tabIndex={-1} className="m-0 outline-none scroll-mt-28 flex items-center gap-3 text-[20px] font-bold"><span className="w-9 h-9 rounded-full bg-sage-t text-sage grid place-items-center text-[14px] font-bold">05</span><label htmlFor="safe">혼행 안심 옵션 팩</label></h2><Toggle id="safe" on={inp.safe} onChange={(v) => set({ safe: v })} label="안심 일정" /></div>
             <div className={`rounded-2xl p-4 flex flex-col gap-3 ${inp.safe ? 'bg-sage-t' : 'bg-oat'}`}>
               <b className={`text-[15px] flex items-center gap-2 ${inp.safe ? 'text-sage' : 'text-slate'}`}><Icon name="shield" size={18} />{inp.safe ? '안심 일정이 켜져 있어요' : '안심 일정이 꺼져 있어요'}</b>
               <p className="m-0 text-[14px] text-slate">성별은 묻지 않아요. 누구나 켤 수 있고, 아래 조건이 일정에 바로 반영돼요.</p>
@@ -281,7 +284,7 @@ export default function Plan() {
       <div className="fixed left-3 right-3 lg:left-1/2 lg:-translate-x-1/2 lg:w-[min(1184px,calc(100%-96px))] z-40 glass rounded-3xl px-4 py-3 lg:px-6 flex items-center gap-4" style={{ bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
         <span className="hidden md:flex items-center gap-3 flex-1 min-w-0"><span className="w-10 h-10 rounded-full bg-sage-t text-sage grid place-items-center shrink-0"><Icon name="shield" size={20} /></span><span className="flex flex-col min-w-0"><b className="text-[14px] truncate">외교부 여행경보 2단계 이상 지역은 동선에서 빼요</b><span className="text-[13px] text-slate truncate">{canMake ? `${preview.id} · ${preview.name} 기준으로 ${inp.days}일 일정을 만들어요` : !whenOk ? '1단계 여행 시기를 먼저 정해 주세요' : '관심사를 하나 이상 골라 주세요'}</span></span></span>
         <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn btn-ghost !min-h-12 !px-5 text-[14px] hidden sm:inline-flex">위로</button>
-        <button type="button" onClick={make} disabled={!canMake} className="btn btn-primary !min-h-12 flex-1 md:flex-none text-[15px]"><Icon name="spark" size={18} />맞춤 일정 만들기</button>
+        <button type="button" onClick={make} aria-disabled={!canMake} className="btn btn-primary !min-h-12 flex-1 md:flex-none text-[15px]"><Icon name="spark" size={18} />맞춤 일정 만들기</button>
       </div>
     </main>
   );
