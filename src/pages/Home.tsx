@@ -39,7 +39,7 @@ function Select({ id, label, value, onChange, children }: { id: string; label: s
   return (
     <div className="flex flex-col gap-1.5 min-w-0">
       <label htmlFor={id} className="text-[13px] font-semibold text-slate">{label}</label>
-      <div className="field !h-[52px]"><select id={id} value={value} onChange={(e) => onChange(e.target.value)} className="cursor-pointer">{children}</select><Icon name="chevd" size={18} /></div>
+      <div className="field !h-[52px]"><select id={id} value={value} onChange={(e) => onChange(e.target.value)} className="cursor-pointer">{children}</select><span className="pointer-events-none text-slate"><Icon name="chevd" size={18} /></span></div>
     </div>
   );
 }
@@ -51,7 +51,7 @@ function QuickMatch() {
   return (
     <section aria-labelledby="qm" className="card rounded-3xl p-5 lg:p-6 flex flex-col gap-4">
       <div className="flex justify-between items-center gap-3"><h2 id="qm" className="m-0 text-[18px] font-bold flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-saffron" aria-hidden="true" />1분 소도시 매칭</h2><span className="px-2.5 py-1 rounded-full bg-sage-t text-sage text-[12px] font-bold">이번 달 계절 반영</span></div>
-      <div className="grid sm:grid-cols-3 gap-3">
+      <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-3">
         <Select id="qm-days" label="여행 기간" value={days} onChange={(v) => setDays(+v)}>{DURATIONS.map((x) => <option key={x.d} value={x.d}>{x.l}</option>)}</Select>
         <Select id="qm-pace" label="이동 강도" value={pace} onChange={(v) => setPace(v as Intensity)}>{PACES.map((x) => <option key={x.v} value={x.v}>{x.l}</option>)}</Select>
         <Select id="qm-theme" label="선호 테마" value={theme} onChange={(v) => setTheme(+v)}>{THEMES.map((x, k) => <option key={x.l} value={k}>{x.l}</option>)}</Select>
@@ -124,28 +124,28 @@ export default function Home() {
       </section>
 
       {/* 히어로 */}
-      <section className="wrap gutter pt-8 lg:pt-12 grid lg:grid-cols-12 gap-6 lg:gap-8">
+      <section className="wrap gutter pt-8 lg:pt-12 grid lg:grid-cols-12 gap-6 lg:gap-8 lg:items-center">
         <div className="lg:col-span-7 flex flex-col gap-5 lg:gap-6">
           <span className="self-start inline-flex items-center gap-2 px-3.5 min-h-9 rounded-full bg-saffron-t text-alert-d text-[13px] font-bold"><Icon name="spark" size={16} />혼자 누리는 태국 소도시의 쉼표 여행</span>
           <h1 className="m-0 text-[36px] leading-[1.22] lg:text-[56px] lg:leading-[1.15] font-extrabold tracking-[-0.03em]">북적이는 방콕은 잠시 안녕,<br /><span className="text-primary">오롯이 나에게 집중하는</span><br />태국 소도시 힐링</h1>
           <p className="m-0 max-w-[600px] text-[17px] lg:text-[18px] leading-[1.65] text-slate">여행 시기와 취향만 알려 주세요. 방콕·푸켓 다음, 조용한 소도시로 가는 동선과 교통, 검증된 숙소, 현지 투어를 한 번에 짜 드려요.</p>
           <div className="flex flex-col sm:flex-row gap-3"><Btn to="/plan" kind="lagoon" className="!min-h-14 text-[16px]">나만의 맞춤 일정 만들기 (5단계)</Btn><a href="#courses" onClick={(e) => { e.preventDefault(); document.getElementById('courses')?.scrollIntoView({ behavior: 'smooth' }); }} className="btn btn-line !min-h-14 text-[16px]"><Icon name="compass" size={18} />추천 코스 8선 둘러보기</a></div>
-          <QuickMatch />
         </div>
-        <div className="lg:col-span-5">
-          <figure className="zoom m-0 relative h-[460px] lg:h-full lg:min-h-[640px] rounded-3xl overflow-hidden shadow-lift">
+        <div className="lg:col-span-5"><QuickMatch /></div>
+      </section>
+      {/* 히어로 사진: 원본 비율(1376×768) 그대로 — 잘리지 않게 */}
+      <section aria-label="오늘의 추천 장면" className="wrap gutter pt-6 lg:pt-8">
+        <figure className="m-0 relative flex flex-col gap-3">
+          <div className="zoom relative aspect-[43/24] rounded-3xl overflow-hidden shadow-lift">
             <Photo k="cafe" eager />
-            <span className="absolute left-4 top-4 right-4 flex flex-wrap justify-between gap-2">
-              <span className="px-3 py-1.5 rounded-full bg-card/95 text-[13px] font-bold">이번 달 추천: {top.id} · {top.name}</span>
-              <span className="px-3 py-1.5 rounded-full bg-mango text-fixedink text-[13px] font-bold inline-flex items-center gap-1"><Icon name="star" size={14} />혼행 적합 {heroCity.solo}.0</span>
-            </span>
-            <figcaption className="absolute left-4 right-4 bottom-4 glass rounded-2xl p-4 flex flex-col gap-2">
-              <span className="flex items-center gap-2 text-[16px] font-bold"><span className="text-primary"><Icon name="pin" size={18} /></span>“나만의 속도로 머무는 숲속 정원”</span>
-              <span className="text-[14px] text-slate">{heroCity.name} · {heroCity.summary}. {heroCity.point}.</span>
-              <span className="flex flex-wrap gap-2 pt-1"><Badge kind="safe" size="sm">안심 일정 기본 켜짐</Badge><span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[13px] font-bold">1박 10만원 이하</span></span>
-            </figcaption>
-          </figure>
-        </div>
+          </div>
+          <figcaption className="card lg:glass lg:absolute lg:left-6 lg:bottom-6 lg:max-w-[400px] rounded-2xl p-4 flex flex-col gap-2">
+            <span className="flex flex-wrap gap-2"><span className="px-3 py-1.5 rounded-full bg-oat text-[13px] font-bold">이번 달 추천: {top.id} · {top.name}</span><span className="px-3 py-1.5 rounded-full bg-mango text-fixedink text-[13px] font-bold inline-flex items-center gap-1"><Icon name="star" size={14} />혼행 적합 {heroCity.solo}.0</span></span>
+            <span className="flex items-center gap-2 text-[16px] font-bold"><span className="text-primary"><Icon name="pin" size={18} /></span>“나만의 속도로 머무는 숲속 정원”</span>
+            <span className="text-[14px] text-slate">{heroCity.name} · {heroCity.summary}. {heroCity.point}.</span>
+            <span className="flex flex-wrap gap-2 pt-1"><Badge kind="safe" size="sm">안심 일정 기본 켜짐</Badge><span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[13px] font-bold">1박 10만원 이하</span></span>
+          </figcaption>
+        </figure>
       </section>
 
       {/* 4대 안심 원칙 */}
