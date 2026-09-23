@@ -22,6 +22,8 @@ import { TourBlocks } from '../components/TourSheet';
 
 export function Courses() {
   const order = 'ECABDFGH'.split('').map((id) => COURSES.find((c) => c.id === id)!);
+  const [picked, setPicked] = useState<string[]>([]); // 일정에 담을 도시
+  const togglePick = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-16 flex flex-col gap-10 lg:gap-14">
       <div className="flex flex-col gap-3"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">Sabai Solow 추천 코스 <span className="text-primary">8선</span></h1><p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-slate">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요. 숙소비는 임시 데이터 기준 어림값이에요.</p></div>
@@ -32,14 +34,22 @@ export function Courses() {
         {order.slice(4).map((c) => <TextCourse key={c.id} c={c} />)}
       </div>
       <section aria-labelledby="cities" className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">추천 소도시 20</h2></div>
+        <div className="flex flex-col gap-2"><span className="kicker">20 slow towns</span><h2 id="cities" className="m-0 text-[28px] lg:text-[36px] font-bold tracking-[-0.02em]">추천 소도시 20</h2><p className="m-0 text-[16px] text-slate">가고 싶은 도시를 담으면, 그 도시들로 이어지는 일정을 바로 짤 수 있어요.</p></div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{CITIES.filter((c) => c.id !== 'bangkok').map((c) => (
           <article key={c.id} className="lift card rounded-3xl overflow-hidden flex flex-col"><div className="zoom aspect-[3/2] overflow-hidden"><Photo k={c.photo} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" /></div>
             <div className="p-4 lg:p-5 flex flex-col gap-2 flex-1"><div className="flex justify-between items-center gap-2"><h3 className="m-0 text-[19px] font-bold">{c.name}</h3><span className="px-2.5 py-1 rounded-full bg-mango-t text-mango-d text-[13px] font-bold inline-flex items-center gap-1 whitespace-nowrap"><Icon name="star" size={13} />혼행 {c.solo}.0</span></div>
               <span className="text-[15px] leading-snug">{c.summary}</span><span className="text-[14px] text-slate leading-snug">{c.point}</span>
-              <span className="mt-auto pt-2 flex flex-wrap gap-1.5"><span className="px-2.5 py-1 rounded-full bg-oat text-[13px] font-semibold">{c.region}</span><span className="px-2.5 py-1 rounded-full bg-oat text-[13px] font-semibold">추천 {c.stay}</span>{c.mountainRoad && <span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[13px] font-semibold">산간 도로</span>}</span></div></article>))}</div>
+              <span className="mt-auto pt-2 flex flex-wrap gap-1.5"><span className="px-2.5 py-1 rounded-full bg-oat text-[13px] font-semibold">{c.region}</span><span className="px-2.5 py-1 rounded-full bg-oat text-[13px] font-semibold">추천 {c.stay}</span>{c.mountainRoad && <span className="px-2.5 py-1 rounded-full bg-sky-t text-sky-d text-[13px] font-semibold">산간 도로</span>}</span>
+              <button type="button" aria-pressed={picked.includes(c.id)} onClick={() => togglePick(c.id)} className={`mt-2 btn !min-h-11 text-[15px] ${picked.includes(c.id) ? 'btn-primary' : 'btn-line'}`}><Icon name={picked.includes(c.id) ? 'check' : 'plus'} size={18} sw={2.4} />{picked.includes(c.id) ? `담았어요 · ${picked.indexOf(c.id) + 1}` : '일정에 담기'}</button></div></article>))}</div>
         <p className="m-0 text-sm text-muted">혼행 적합도: 치안·대중교통·혼밥 환경·투어 참여 쉬움을 5점 만점으로 본 내부 초안 점수(현지 검수 필요).</p>
       </section>
+      {picked.length > 0 && (
+        <div className="fixed left-3 right-3 lg:left-1/2 lg:-translate-x-1/2 lg:w-[min(1184px,calc(100%-96px))] z-40 glass rounded-3xl px-4 py-3 lg:px-6 flex items-center gap-3 bottom-[calc(88px+env(safe-area-inset-bottom,0px))] lg:bottom-6" role="region" aria-label="담은 도시">
+          <span className="flex-1 min-w-0 flex flex-col"><b className="text-[15px]">{picked.length}곳 담음</b><span className="text-[14px] text-slate truncate">{picked.map((id) => cityById(id).name).join(' · ')}</span></span>
+          <button type="button" onClick={() => setPicked([])} className="btn btn-ghost !min-h-12 !px-4 text-[14px]">비우기</button>
+          <Link to={`/plan?cities=${picked.join(',')}&days=${Math.min(21, Math.max(5, picked.length * 2 + 1))}`} className="btn btn-primary !min-h-12 !px-5 text-[15px]"><Icon name="spark" size={18} />이 도시로 일정 짜기</Link>
+        </div>
+      )}
     </main>
   );
 }

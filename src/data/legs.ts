@@ -34,6 +34,30 @@ const L: Leg[] = [
   { from: 'trang', to: 'kohlipe', options: [o('ferry', '미니밴 + 스피드보트', 3.5, '빡바라 항까지 1.5~2h + 1.5h', { seasonal: '11~5월 운항 · 5~10월 대폭 감편' })] },
 ];
 export const hasLeg = (from: string, to: string) => L.some((l) => (l.from === from && l.to === to) || (l.from === to && l.to === from));
+/**
+ * 직통이 없을 때 거쳐 갈 도시들(출발·도착 제외). 가장 짧은 시간 + 갈아타기 1회당 1시간을 더한 기준.
+ * 길이 전혀 없으면 빈 배열(그때는 '[교통편 확인 필요]'로 표시돼요).
+ */
+export function viaCities(from: string, to: string): string[] {
+  if (from === to || hasLeg(from, to)) return [];
+  const cost = (l: Leg) => Math.min(...l.options.map((x) => x.hours || 3)) + 1;
+  const dist = new Map<string, number>([[from, 0]]); const prev = new Map<string, string>(); const done = new Set<string>();
+  while (true) {
+    let cur: string | undefined; let best = Infinity;
+    for (const [k, d] of dist) if (!done.has(k) && d < best) { best = d; cur = k; }
+    if (!cur || cur === to) break;
+    done.add(cur);
+    for (const l of L) {
+      const nb = l.from === cur ? l.to : l.to === cur ? l.from : undefined;
+      if (!nb || done.has(nb)) continue;
+      const d = best + cost(l);
+      if (d < (dist.get(nb) ?? Infinity)) { dist.set(nb, d); prev.set(nb, cur); }
+    }
+  }
+  if (!prev.has(to)) return [];
+  const path: string[] = []; for (let c = prev.get(to)!; c !== from; c = prev.get(c)!) path.unshift(c);
+  return path;
+}
 /** 직통 구간이 없을 때 거쳐 갈 교통 거점 */
 export const HUBS = ['bangkok', 'chiangmai', 'suratthani', 'trang'];
 export function findLeg(from: string, to: string): Leg {

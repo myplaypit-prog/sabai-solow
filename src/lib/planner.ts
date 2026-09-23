@@ -1,7 +1,7 @@
 import type { Course, CourseStop, Interest, TourType, TransportOption } from '../data/types';
 import { COURSES, courseById } from '../data/courses';
 import { cityById } from '../data/cities';
-import { findLeg, hasLeg, HUBS } from '../data/legs';
+import { findLeg, hasLeg, HUBS, viaCities } from '../data/legs';
 import { EVENTS } from '../data/events';
 import { tourById } from '../data/tours';
 import { regionSeason } from '../data/seasons';
@@ -15,6 +15,8 @@ export interface PlanInputs {
   days: number; budget: number; // 1박 숙소 상한(만원)
   intensity: Intensity; nightMove: boolean;
   interests: Interest[]; safe: boolean; courseId?: string;
+  /** 직접 고른 도시(순서는 규칙이 가까운 순으로 정리). 있으면 추천 코스 대신 이 도시들로 짜요 */
+  cities?: string[];
 }
 export const DEFAULT_INPUTS: PlanInputs = { whenMode: 'dates', start: '2026-10-20', end: '2026-10-29', days: 10, budget: 10, intensity: 'normal', nightMove: true, interests: ['temple', 'cafe'], safe: true };
 
@@ -95,21 +97,53 @@ export function bridgeStops(start: string, stops: CourseStop[]): CourseStop[] {
   let prev = start;
   for (const s of stops) {
     if (s.nights === 0 && s.city === prev) continue;
-    const hub = hubBetween(prev, s.city);
-    if (hub && !(out.length && out[out.length - 1].city === hub)) out.push({ city: hub, nights: 0 });
+    for (const via of viaCities(prev, s.city)) if (!(out.length && out[out.length - 1].city === via)) out.push({ city: via, nights: 0 });
     out.push({ ...s });
     prev = s.city;
   }
   return out;
 }
 
+/** 도시 사이 거리(대략, 위경도 1° ≈ 111km) */
+const km = (a: string, b: string) => { const x = cityById(a), y = cityById(b); return Math.hypot(x.lat - y.lat, (x.lng - y.lng) * Math.cos((x.lat * Math.PI) / 180)) * 111; };
+/** 직접 가거나 허브 1곳을 거쳐 갈 수 있는지 */
+const reachable = (a: string, b: string) => a === b || hasLeg(a, b) || viaCities(a, b).length > 0;
+/** 한 번에 담을 수 있는 도시 수: 도시마다 최소 1박 */
+export const maxCities = (days: number) => Math.max(1, days - 1);
+
+/**
+ * 직접 고른 도시로 체류 순서·박수를 정해요.
+ * 순서: 방콕에서 가까운 곳부터, 길이 이어지는(직통·허브 경유) 도시를 먼저 고르는 가까운-이웃 방식.
+ * 박수: 전체 박수를 고르게 나누고, 남는 박은 앞쪽(보통 큰 도시)에 더해요.
+ */
+export function customStops(cities: string[], i: PlanInputs, start = 'bangkok'): CourseStop[] {
+  const left = [...new Set(cities)].filter((c) => c !== start).slice(0, maxCities(i.days));
+  const order: string[] = [];
+  let cur = start;
+  while (left.length) {
+    left.sort((a, b) => (reachable(cur, a) ? 0 : 5000) + km(cur, a) - ((reachable(cur, b) ? 0 : 5000) + km(cur, b)));
+    cur = left.shift()!; order.push(cur);
+  }
+  const total = Math.max(order.length, i.days - 1);
+  const base = Math.floor(total / order.length); let extra = total - base * order.length;
+  return order.map((city) => ({ city, nights: base + (extra-- > 0 ? 1 : 0) }));
+}
+
+/** 직접 고른 도시와 가장 많이 겹치는 추천 코스(이름·사진·출발지 기준으로 씀) */
+export function baseCourseFor(cities: string[], i: PlanInputs): Course {
+  const ranked = rankCourses(i).map((r) => r.c).filter((c) => c.start === 'bangkok');
+  const overlap = (c: Course) => c.stops.filter((s) => s.nights > 0 && cities.includes(s.city)).length;
+  return [...ranked].sort((a, b) => overlap(b) - overlap(a))[0];
+}
+
 const INTEREST_TOUR: Record<Interest, TourType[]> = { nature: ['trekking', 'elephant', 'zipline'], cafe: ['cooking'], temple: ['cooking'], sea: [], yoga: ['cooking'], work: [] };
 
 export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string, stopsOverride?: CourseStop[]): Trip {
-  const course = forcedCourseId || i.courseId ? courseById((forcedCourseId || i.courseId)!) : rankCourses(i)[0].c;
+  const custom = !forcedCourseId && !stopsOverride && !!i.cities?.length;
+  const course = forcedCourseId || (!custom && i.courseId) ? courseById((forcedCourseId || i.courseId)!) : custom ? baseCourseFor(i.cities!, i) : rankCourses(i)[0].c;
   const m = tripMonth(i);
   const rainy = RULES.rainyMonths.includes(m), heat = RULES.heatMonths.includes(m);
-  const stops = bridgeStops(course.start, stopsOverride ? stopsOverride.map((x) => ({ ...x })) : fitStops(course, i));
+  const stops = bridgeStops(course.start, stopsOverride ? stopsOverride.map((x) => ({ ...x })) : custom ? customStops(i.cities!, i, course.start) : fitStops(course, i));
   const warnings: string[] = [];
   const days: TripDay[] = [];
   let prev = course.start, pending: PlannedLeg[] = [], n = 1;
@@ -153,10 +187,8 @@ export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string,
   }
   // 마지막 날: 출발 도시에서 귀국 구간
   const lastCity = prev;
-  const departHub = hubBetween(lastCity, course.end);
-  const depart: PlannedLeg[] = course.end === lastCity ? [] : departHub
-    ? [chooseOption(lastCity, departHub, i, true), chooseOption(departHub, course.end, i, true)]
-    : [chooseOption(lastCity, course.end, i, true)];
+  const departPath = course.end === lastCity ? [] : [lastCity, ...viaCities(lastCity, course.end), course.end];
+  const depart: PlannedLeg[] = departPath.slice(1).map((c, k) => chooseOption(departPath[k], c, i, true));
   days.push({ n, date: dateOf(n), city: lastCity, legs: [], slots: [{ label: '오전', text: '체크아웃' }], badges: [], stay: false, departLegs: depart });
 
   // 규칙 10: 날짜 배지(금주일·축제·공휴일)
@@ -179,7 +211,7 @@ export function planTrip(i: PlanInputs, userId: string, forcedCourseId?: string,
   if (i.safe) warnings.push('안심 일정: 도시 도착은 21시 전, 야간버스 대신 침대칸, 하루 이동 5시간 이하를 우선해요.');
   const cityIds = [...new Set(days.map((d) => d.city))];
   return {
-    id: Math.random().toString(36).slice(2, 10), userId, createdAt: new Date().toISOString(), name: course.name, courseId: course.id, inputs: i, days, month: m,
+    id: Math.random().toString(36).slice(2, 10), userId, createdAt: new Date().toISOString(), name: i.cities?.length ? `${stops.filter((x) => x.nights > 0).slice(0, 3).map((x) => cityById(x.city).name).join('·')} 나만의 루트` : course.name, courseId: course.id, inputs: i, days, month: m,
     totalHours: Math.round(allLegs.reduce((a, l) => a + l.option.hours, 0)), nights: days.length - 1, cityIds, warnings, notes: {}, stops,
   };
 }
