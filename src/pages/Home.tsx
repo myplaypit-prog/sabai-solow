@@ -91,7 +91,7 @@ function Courses() {
       {rest.length > 0 && (
         <div className="mt-4 lg:mt-5 card rounded-3xl p-5 lg:px-7 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-6">
           <span className="flex items-center gap-2 font-bold"><span className="text-primary"><Icon name="compass" size={20} /></span>다른 코스도 살펴보세요</span>
-          <ul className="m-0 p-0 list-none flex flex-wrap gap-2 flex-1">{rest.map((c) => <li key={c.id}><Link to={`/plan?course=${c.id}`} className="inline-flex items-center gap-1.5 min-h-10 px-3.5 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold"><b className="text-primary">{c.id}</b>{c.name} ({c.days}일)</Link></li>)}</ul>
+          <ul className="m-0 p-0 list-none flex flex-wrap gap-2 flex-1">{rest.map((c) => <li key={c.id}><Link to={`/plan?course=${c.id}`} className="inline-flex items-center gap-1.5 min-h-11 px-3.5 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold"><b className="text-primary">{c.id}</b>{c.name} ({c.days}일)</Link></li>)}</ul>
           <Link to="/courses" className="text-[15px] font-bold text-primary inline-flex items-center gap-1 min-h-11">코스 8선 전체 보기<Icon name="ext" size={16} /></Link>
         </div>
       )}
@@ -117,7 +117,7 @@ export default function Home() {
       <section aria-label="이달의 여행 브리핑" className="bg-oat/60 border-b rule">
         <div className="wrap gutter py-3 flex flex-nowrap lg:flex-wrap items-center gap-2 lg:gap-3 text-[14px] overflow-x-auto no-scrollbar whitespace-nowrap">
           <span className="inline-flex items-center gap-2 px-3 min-h-9 rounded-full bg-card line font-bold"><span className="w-2 h-2 rounded-full bg-sage pulse-dot" aria-hidden="true" />이달의 여행 브리핑</span>
-          <Link to="/season" className="inline-flex items-center gap-1.5 px-3 min-h-9 rounded-full bg-sage-t text-sage font-semibold"><Icon name="sun" size={16} />{m}월 · {tip.badgeText}<span className="hidden lg:inline"> — {tip.quote}</span></Link>
+          <Link to="/season" className="inline-flex items-center gap-1.5 px-3 min-h-11 rounded-full bg-sage-t text-sage font-semibold"><Icon name="sun" size={16} />{m}월 · {tip.badgeText}<span className="hidden lg:inline"> — {tip.quote}</span></Link>
           {nd && <span className="inline-flex items-center gap-1.5 px-3 min-h-9 rounded-full bg-alert-t text-alert-d font-semibold"><Icon name="nodrink" size={16} />다음 금주일: {fmtMD(nd.from!)} ({nd.title})</span>}
           <span className="inline-flex items-center gap-1.5 px-3 min-h-9 rounded-full bg-sky-t text-sky-d font-semibold"><Icon name="moon" size={16} />안심 일정: 21시 전 숙소 도착</span>
         </div>

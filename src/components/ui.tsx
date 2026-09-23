@@ -48,7 +48,7 @@ function LeafyW() {
 }
 export function Logo({ size = 22, onDark = false, tagline = true }: { size?: number; onDark?: boolean; tagline?: boolean }) {
   return (
-    <Link to="/" aria-label="Sabai Solow 홈" className={`inline-flex items-center gap-2.5 no-underline ${onDark ? 'text-on-night' : 'text-logo'}`}>
+    <Link to="/" aria-label="Sabai Solow 홈" className={`inline-flex items-center gap-2.5 min-h-11 no-underline ${onDark ? 'text-on-night' : 'text-logo'}`}>
       <LogoMark size={Math.round(size * 1.75)} />
       <span className="flex flex-col gap-0.5">
         <span className="font-logo font-bold leading-none tracking-[-0.01em] pr-[0.35em]" style={{ fontSize: size }}>Sabai Solo<LeafyW /></span>

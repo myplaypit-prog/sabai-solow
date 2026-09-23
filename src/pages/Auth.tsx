@@ -72,7 +72,7 @@ export function Signup() {
     if (!emailRule(f.email)) er.email = '이메일 형식을 확인해 주세요.'; if (!pwRule(f.pw)) er.pw = '8자 이상, 영문과 숫자를 함께 넣어 주세요.'; if (f.pw !== f.pw2) er.pw2 = '비밀번호가 서로 달라요.'; if (!f.terms || !f.privacy) er.terms = '필수 약관에 동의해 주세요.';
     setErr(er); if (Object.keys(er).length) return; setBusy(true);
     try { await signup(f.email, f.pw); await refresh(); nav('/verify', { state: { next } }); } catch (x) { setErr({ email: (x as Error).message }); } finally { setBusy(false); } };
-  const Chk = ({ k, label }: { k: 'terms' | 'privacy' | 'mkt'; label: string }) => <label className="flex gap-3 items-center min-h-11 font-semibold"><input type="checkbox" checked={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.checked })} className="w-[22px] h-[22px] accent-[rgb(var(--lagoon))]" />{label}</label>;
+  const Chk = ({ k, label }: { k: 'terms' | 'privacy' | 'mkt'; label: string }) => <label className="flex gap-3 items-center min-h-11 font-semibold"><input type="checkbox" checked={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.checked })} className="w-6 h-6 accent-[rgb(var(--primary))]" />{label}</label>;
   return (
     <AuthFrame kicker="Sign up" title="이메일로 가입하기">
       <form onSubmit={submit} className="flex flex-col gap-[18px]" noValidate>

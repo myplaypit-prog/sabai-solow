@@ -62,7 +62,7 @@ function DayCard({ d, trip, color, onTour, onStays }: { d: TripDay; trip: TripT;
             <span className="flex flex-col gap-1"><span className="text-[13px] font-extrabold tracking-[.08em] text-chili-d">추천 투어</span><span className="text-[17px] font-extrabold">{t.name}</span><span className="flex gap-1.5 flex-wrap items-center text-sm text-muted">{t.duration}{t.noRiding && <Badge kind="noride" size="sm" />}{d.tourCaution && <Badge kind="warn" size="sm">우기 주의</Badge>}</span></span>
             <Icon name="chev" />
           </button>); })()}
-        {d.stay && <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3.5 py-3 rounded-2xl bg-cloud"><Icon name="bed" /><span className="flex-1 min-w-[180px] flex flex-col gap-0.5"><span className="font-extrabold">{stayPick ?? `${cname(d.city)} 숙소를 골라 주세요`}</span><span className="text-sm text-muted">{stayObj ? `구글맵 ★ ${stayObj.rating} · 1박 ${stayObj.priceKrw} · ${stayObj.site}${stayObj.sample ? ' · 임시 데이터' : ''}` : stayPick ? cname(d.city) : `평점 4.5+ · 1박 ${trip.inputs.budget}만원 이하에서 골라요`}</span></span><button type="button" onClick={() => onStays(d.city)} className="ml-auto min-h-11 text-[15px] font-extrabold text-lagoon whitespace-nowrap">{stayPick ? '바꾸기' : '숙소 고르기'}</button></div>}
+        {d.stay && <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3.5 py-3 rounded-2xl bg-cloud"><Icon name="bed" /><span className="flex-1 min-w-[180px] flex flex-col gap-0.5"><span className="font-extrabold">{stayPick ?? `${cname(d.city)} 숙소를 골라 주세요`}</span><span className="text-sm text-muted">{stayObj ? `구글맵 ★ ${stayObj.rating} · 1박 ${stayObj.priceKrw} · ${stayObj.site}${stayObj.sample ? ' · 임시 데이터' : ''}` : stayPick ? cname(d.city) : `평점 4.5+ · 1박 ${trip.inputs.budget}만원 이하에서 골라요`}</span></span><button type="button" onClick={() => onStays(d.city)} className="ml-auto min-h-11 min-w-11 px-2 text-[15px] font-extrabold text-primary whitespace-nowrap">{stayPick ? '바꾸기' : '숙소 고르기'}</button></div>}
         {d.departLegs?.map((l) => <p key={l.from + l.to} className="m-0 text-[15px] text-muted flex gap-2 items-center"><Icon name={MODE_ICON[l.option.mode]} size={18} />{cname(l.from)} → {cname(l.to)} {l.option.label} {l.option.hoursText}</p>)}
       </div>
     </article>
@@ -226,6 +226,7 @@ export default function Trip() {
         {tab === '일자별' && (
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-7 flex flex-col">
+              <h2 className="sr-only">일자별 일정</h2>
               <div className="flex justify-end mb-2 no-print"><button type="button" onClick={() => setEdit(!edit)} aria-expanded={edit} className="btn btn-line min-h-11 text-[15px]"><Icon name="route" size={18} />{edit ? '편집 닫기' : '도시 순서·체류일 편집'}</button></div>
               {edit && <div className="mb-5"><Editor trip={trip} onApply={apply} onCancel={() => setEdit(false)} /></div>}
               {trip.days.map((d) => { const si = stops.findIndex((s) => s.from <= d.n && s.to >= d.n); return (

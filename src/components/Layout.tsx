@@ -45,14 +45,14 @@ export function Header() {
           <Logo size={22} />
         </div>
         <nav aria-label="주요 메뉴" className="hidden xl:flex items-center gap-1 px-2 py-1.5 bg-oat rounded-full">
-          {MENU.map((x) => <NavLink key={x.to} to={x.to} end={x.end} className={({ isActive }) => `px-4 min-h-10 inline-flex items-center rounded-full text-[14px] transition-colors ${isActive ? 'bg-card text-primary font-bold shadow-soft' : 'font-semibold text-slate hover:text-marine'}`}>{x.label}</NavLink>)}
+          {MENU.map((x) => <NavLink key={x.to} to={x.to} end={x.end} className={({ isActive }) => `px-4 min-h-11 inline-flex items-center rounded-full text-[14px] transition-colors ${isActive ? 'bg-card text-primary font-bold shadow-soft' : 'font-semibold text-slate hover:text-marine'}`}>{x.label}</NavLink>)}
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/season" className="hidden md:inline-flex items-center gap-1.5 px-3 min-h-9 rounded-full bg-oat text-[13px] font-semibold text-slate hover:text-marine"><span className="text-saffron"><Icon name="sun" size={16} /></span>{m}월 · {tip.badgeText.split(' · ')[1] ?? tip.badgeText}</Link>
+          <Link to="/season" className="hidden md:inline-flex items-center gap-1.5 px-3 min-h-11 rounded-full bg-oat text-[13px] font-semibold text-slate hover:text-marine"><span className="text-saffron"><Icon name="sun" size={16} /></span>{m}월 · {tip.badgeText.split(' · ')[1] ?? tip.badgeText}</Link>
           <ThemeBtn />
           {user
-            ? <Link to="/my" className="hidden sm:inline-flex items-center gap-2 min-h-10 pl-1.5 pr-3.5 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold"><span className="w-8 h-8 rounded-full bg-night text-on-night grid place-items-center text-[13px] font-bold" aria-hidden="true">{user.email.slice(0, 1).toUpperCase()}</span>내 일정</Link>
-            : <Link to="/login" className="hidden sm:inline-flex items-center min-h-10 px-4 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold">로그인</Link>}
+            ? <Link to="/my" className="hidden sm:inline-flex items-center gap-2 min-h-11 pl-1.5 pr-3.5 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold"><span className="w-8 h-8 rounded-full bg-night text-on-night grid place-items-center text-[13px] font-bold" aria-hidden="true">{user.email.slice(0, 1).toUpperCase()}</span>내 일정</Link>
+            : <Link to="/login" className="hidden sm:inline-flex items-center min-h-11 px-4 rounded-full bg-oat hover:bg-hair text-[14px] font-semibold">로그인</Link>}
           <button type="button" aria-label={open ? '메뉴 닫기' : '메뉴 열기'} aria-expanded={open} onClick={() => setOpen(!open)} className="xl:hidden w-11 h-11 -mr-2 grid place-items-center"><Icon name={open ? 'x' : 'menu'} size={22} /></button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export function Footer() {
           {[['소도시 가이드', G], ['혼행 서포트', S]].map(([h, items]) => (
             <nav key={h as string} aria-label={h as string} className="lg:col-span-3 flex flex-col gap-2">
               <h3 className="m-0 text-[15px] font-bold">{h as string}</h3>
-              {(items as string[][]).map(([to, l]) => <Link key={l} to={to} className="text-[15px] text-slate hover:text-marine min-h-8 inline-flex items-center">{l}</Link>)}
+              {(items as string[][]).map(([to, l]) => <Link key={l} to={to} className="text-[15px] text-slate hover:text-marine min-h-11 inline-flex items-center">{l}</Link>)}
             </nav>
           ))}
         </div>

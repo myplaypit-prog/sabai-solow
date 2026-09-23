@@ -25,6 +25,7 @@ export function Courses() {
   return (
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-16 flex flex-col gap-10 lg:gap-14">
       <div className="flex flex-col gap-3"><span className="kicker flex items-center gap-1.5"><Icon name="route" size={16} />엄선한 소도시 힐링 여정</span><h1 className="m-0 text-[32px] lg:text-[48px] leading-[1.2] font-extrabold tracking-[-0.03em]">Sabai Solow 추천 코스 <span className="text-primary">8선</span></h1><p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-slate">카드를 누르면 그 코스로 계획을 시작해요. 20개 소도시 가운데 외교부 여행경보 지역은 모두 뺐어요. 숙소비는 임시 데이터 기준 어림값이에요.</p></div>
+      <h2 className="sr-only">추천 코스 8선</h2>
       <div className="grid lg:grid-cols-12 gap-4 lg:gap-5">
         {order.slice(0, 2).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 0} />)}
         {order.slice(2, 4).map((c, k) => <BigCourse key={c.id} c={c} wide={k === 1} />)}
@@ -81,7 +82,7 @@ export function MyTrips() {
           <li key={t.id} className="card rounded-[26px] overflow-hidden flex flex-col">
             <Link to={`/trip/${t.id}`} className="block h-40 zoom overflow-hidden"><Photo k={c.photo} /></Link>
             <div className="p-5 flex flex-col gap-2">
-              <Link to={`/trip/${t.id}`} className="text-xl font-extrabold hover:underline">{t.name}</Link>
+              <Link to={`/trip/${t.id}`} className="min-h-11 inline-flex items-center text-xl font-extrabold hover:underline">{t.name}</Link>
               <span className="text-[15px]">{d0 ? `${fmtDot(d0)} 출발 · ` : `${t.month}월 · `}{t.nights}박 {t.days.length}일 · 도시 {t.cityIds.filter((x) => x !== 'bangkok').length}곳</span>
               <div className="flex gap-1.5 flex-wrap">{t.offline ? <Badge kind="rec" size="sm">오프라인 저장됨</Badge> : <Badge kind="holiday" size="sm">온라인에서만</Badge>}{t.inputs.safe && <Badge kind="safe" size="sm">안심 일정</Badge>}</div>
               <span className="text-sm text-muted">마지막 저장 {new Date(t.createdAt).toLocaleString('ko-KR')}</span>
@@ -116,7 +117,7 @@ export function Safety() {
     <main className="wrap gutter pt-8 lg:pt-12 pb-28 lg:pb-40 flex flex-col gap-8">
       <div className="flex flex-col gap-3"><Kicker>Safety pack</Kicker><h1 className="m-0 text-[36px] lg:text-[48px] leading-[1.1] font-extrabold tracking-[-0.03em]">혼행 안심 팩</h1><p className="m-0 text-muted">오프라인에서도 보이도록 글자 중심으로 만들었어요.</p></div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {EMERGENCY.map((e) => <section key={e.num} className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-bold text-muted">{e.label}</span><a href={`tel:${e.tel}`} className="text-3xl lg:text-4xl font-extrabold leading-none select-all hover:text-primary">{e.num}</a><span className="text-[15px]">{e.note}</span></section>)}
+        {EMERGENCY.map((e) => <section key={e.num} className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-bold text-muted">{e.label}</span><a href={`tel:${e.tel}`} className="min-h-12 inline-flex items-center text-3xl lg:text-4xl font-extrabold leading-none select-all hover:text-primary">{e.num}</a><span className="text-[15px]">{e.note}</span></section>)}
         <section className="card rounded-[26px] p-6 flex flex-col gap-2"><span className="text-sm font-extrabold text-muted">여행경보</span><span className="text-[15px] leading-relaxed">송클라 42번 국도 이남·파타니·나라티왓·얄라, 태국–캄보디아 국경 50km 이내, 딱주, 매싸이·치앙센 국경검문소는 추천에서 모두 뺐어요.</span><span className="text-sm text-muted">2026-09-23 확인 · <ExtLink href={EMERGENCY_SRC} className="underline">외교부 해외안전여행</ExtLink> 기준 · 연락처도 같은 출처</span></section>
       </div>
       <section className="flex flex-col gap-4"><h2 className="m-0 text-2xl lg:text-3xl font-extrabold">태국어 목적지 카드</h2>
@@ -171,7 +172,7 @@ export function TourPage() {
   return (
     <main className="wrap gutter pt-8 pb-28 flex flex-col gap-6"><div className="h-[260px] lg:h-[420px] rounded-[28px] overflow-hidden"><Photo k={t.photo} eager /></div>
       <Kicker>Local tour</Kicker><h1 className="m-0 text-4xl lg:text-6xl font-extrabold tracking-[-0.03em]">{t.name}</h1><span className="text-[15px]">{t.cities.map((c) => cityById(c).name).join(', ')} · {t.duration} · {t.priceBand}</span>
-      {t.noRiding && <div><Badge kind="noride" /></div>}<TourBlocks id={t.id} /></main>
+      {t.noRiding && <div><Badge kind="noride" /></div>}<h2 className="sr-only">투어 안내</h2><TourBlocks id={t.id} /></main>
   );
 }
 
